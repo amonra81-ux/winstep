@@ -254,8 +254,8 @@ function Hero() {
       {/* Parallax background image */}
       <motion.div style={{ y: imageY, scale: imageScale }} className="absolute inset-0 z-0">
         <img
-          src="/assets/hero.jpg"
-          alt="Piedi di un atleta su un molo all'alba, lago e foresta nella nebbia"
+          src="/assets/hero-new.jpg"
+          alt="Piedi di un atleta su un molo all'alba con barattolo WINSTEP, lago e foresta nella nebbia"
           className="h-full w-full object-cover"
         />
       </motion.div>
@@ -263,7 +263,7 @@ function Hero() {
       {/* Gradient overlay */}
       <motion.div
         style={{ opacity: overlayOpacity }}
-        className="absolute inset-0 z-10 bg-gradient-to-t from-[#0F0F0F] via-[#0F0F0F]/40 to-transparent"
+        className="absolute inset-0 z-10 bg-gradient-to-t from-[#0F0F0F] via-[#0F0F0F]/30 to-[#0F0F0F]/50"
       />
 
       {/* Content */}
@@ -273,7 +273,7 @@ function Hero() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="mb-6 flex items-center gap-3"
+            className="mb-8 flex items-center gap-3"
           >
             <span className="h-px w-12 bg-[#E85D2F]" />
             <span className="text-mono-label text-[#E85D2F]">Unguento sportivo · Post workout</span>
@@ -282,16 +282,24 @@ function Hero() {
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, delay: 0.15 }}
-            className="text-display text-[clamp(3rem,9vw,7rem)] text-[#FAF7F2]"
+            className="text-display text-[clamp(3.5rem,13vw,10rem)] text-[#E85D2F]"
+          >
+            WINSTEP
+          </motion.h1>
+          <motion.h2
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.9, delay: 0.35 }}
+            className="text-display text-[clamp(2rem,7vw,5.5rem)] text-[#FAF7F2]"
           >
             Tre mondi.
             <br />
-            <span className="text-[#E85D2F]">Un solo contatto.</span>
-          </motion.h1>
+            <span className="text-[#FAF7F2]/30">Un solo contatto.</span>
+          </motion.h2>
           <motion.p
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.8, delay: 0.55 }}
             className="mt-8 max-w-xl text-lg text-[#FAF7F2]/60"
           >
             Potenza e vittoria in ogni gara. L'unguento sportivo per piedi dolenti che entra nella tua routine post-allenamento: lenisce, ammorbidisce, dà sollievo.
@@ -386,8 +394,8 @@ function Problem() {
           <div className="relative mt-px overflow-hidden rounded-2xl">
             <div className="aspect-[21/9] overflow-hidden rounded-2xl">
               <img
-                src="/assets/pool.jpg"
-                alt="Atleta al bordo piscina con dolore ai piedi"
+                src="/assets/cyclist.jpg"
+                alt="Ciclista esausto che si tiene il piede dolorante al tramonto"
                 className="h-full w-full object-cover"
               />
             </div>
