@@ -175,9 +175,9 @@ function Hero() {
             WINSTEP
           </motion.h1>
           <motion.h2 initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.9, delay: 0.3 }} className="mt-1 text-display text-[clamp(1.25rem,5vw,5rem)] text-[#FAF7F2] [text-shadow:0_4px_20px_rgba(0,0,0,0.5)]">
-            Tre mondi.
+            Tre discipline.
             <br />
-            <span className="text-[#FAF7F2]/30">Un solo contatto.</span>
+            <span className="text-[#FAF7F2]/30">Un solo prodotto.</span>
           </motion.h2>
           <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 0.45 }} className="mt-4 max-w-md text-sm sm:text-lg text-[#FAF7F2] [text-shadow:0_2px_12px_rgba(0,0,0,0.8)]">
             Potenza e vittoria in ogni gara. L'unguento sportivo per piedi dolenti che entra nella tua routine post-allenamento: lenisce, ammorbidisce, dà sollievo.
@@ -313,7 +313,7 @@ function Product() {
                 <span className="text-[#FAF7F2]/20">in ogni gara.</span>
               </h2>
               <p className="mt-5 max-w-md text-sm sm:text-lg text-[#FAF7F2]/50">
-                Unguento sportivo per piedi dolenti. Si applica a fine allenamento, lavora sul recupero e sulla pelle. Pensato per chi sottopone i piedi a stress prolungato.
+                Unguento sportivo pensato per chi fa endurance.
               </p>
               <div className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[#FAF7F2]/5">
                 {benefits.map((b) => (
@@ -363,12 +363,12 @@ function Ingredients() {
               <span className="text-mono-label text-[#E85D2F]">Formula naturale</span>
             </div>
             <h2 className="text-display text-[clamp(1.75rem,4vw,4.5rem)] text-[#FAF7F2]">
-              Ingredienti naturali.
+              98% ingredienti naturali.
               <br />
-              <span className="text-[#FAF7F2]/20">Niente di superfluo.</span>
+              <span className="text-[#FAF7F2]/20">Solo quello che serve.</span>
             </h2>
             <p className="mt-5 max-w-xl text-sm sm:text-lg text-[#FAF7F2]/50">
-              Formula naturale, senza sostanze dopanti. Olio d'oliva biologico, cera d'api, lavanda e canfora. Nessun ingrediente in lista WADA.
+              Formula naturale, interamente prodotta in Italia, senza sostanze dopanti.
             </p>
           </div>
         </Reveal>
@@ -380,6 +380,10 @@ function Ingredients() {
             </motion.div>
             <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0F] via-[#0F0F0F]/20 to-transparent" />
           </div>
+        </Reveal>
+
+        <Reveal>
+          <h3 className="mb-5 sm:mb-6 text-headline text-lg sm:text-2xl text-[#FAF7F2]">Lista ingredienti</h3>
         </Reveal>
 
         <div className="grid gap-px overflow-hidden rounded-2xl border border-[#FAF7F2]/5 sm:grid-cols-2 lg:grid-cols-4">
@@ -487,9 +491,9 @@ function ForestBreak() {
       <div className="absolute inset-0 flex items-center justify-center">
         <Reveal>
           <p className="text-display text-[clamp(1.5rem,5vw,4rem)] text-center text-[#FAF7F2]">
-            Tre discipline.
+            Tre mondi.
             <br />
-            <span className="text-[#E85D2F]">Un solo prodotto.</span>
+            <span className="text-[#E85D2F]">Un solo contatto.</span>
           </p>
         </Reveal>
       </div>
@@ -516,7 +520,7 @@ function Pricing() {
               <span className="h-px w-12 bg-[#E85D2F]" />
               <span className="text-mono-label text-[#E85D2F]">Offerte</span>
             </div>
-            <h2 className="text-display text-[clamp(1.75rem,4vw,4.5rem)] text-[#FAF7F2]">Scegli il tuo recupero.</h2>
+            <h2 className="text-display text-[clamp(1.75rem,4vw,4.5rem)] text-[#FAF7F2]">Scegli il tuo formato.</h2>
             <p className="mt-4 text-sm sm:text-lg text-[#FAF7F2]/50">Spedizione in tutta Italia. Pagamento sicuro con Stripe.</p>
           </div>
         </Reveal>
@@ -564,7 +568,7 @@ function Pricing() {
 function FAQ() {
   const faqs = [
     { q: "WINSTEP è un farmaco?", a: "No, WINSTEP è un cosmetico regolare. Può proteggere, ammorbidire, lenire e dare sollievo e sensazione di defaticamento. Non cura o guarisce patologie o dolori articolari: per quelli rivolgiti a un medico." },
-    { q: "Posso usarlo se gareggio?", a: "WINSTEP è un cosmetico a norma (conformità CPNP). La formula è naturale - olio d'oliva biologico, girasole, cera d'api, lavanda, vitamina E - e nessuno degli ingredienti è presente nelle liste WADA delle sostanze proibite." },
+    { q: "Posso usarlo se gareggio?", a: "Sì. WINSTEP è un cosmetico a norma (conformità CPNP). La formula è naturale - olio d'oliva biologico, girasole, cera d'api, lavanda, vitamina E - e nessuno degli ingredienti è presente nelle liste WADA delle sostanze proibite." },
     { q: "Come si usa?", a: "Applicare una piccola quantità di unguento sui piedi puliti e asciutti. Massaggiare delicatamente fino a completo assorbimento, insistendo sulle zone più secche o screpolate come talloni e pianta del piede." },
     { q: "Quanto dura un barattolo?", a: "Il barattolo da 50 ml ha un PAO (Period After Opening) di 6 mesi. Con uso regolare post-allenamento, un barattolo dura circa 4-6 settimane." },
     { q: "Posso annullare l'abbonamento?", a: "Sì, in qualsiasi momento. L'abbonamento mensile si gestisce tramite Stripe: niente vincoli, niente penali. Annulli quando vuoi dal link nelle email di conferma." },
