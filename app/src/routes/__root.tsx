@@ -82,7 +82,7 @@ function buildHead(meta: AppMeta) {
       {
         rel: "preconnect",
         href: "https://fonts.gstatic.com",
-        crossOrigin: "anonymous",
+        crossOrigin: "anonymous" as const,
       },
       {
         rel: "stylesheet",
