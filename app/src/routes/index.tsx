@@ -260,7 +260,7 @@ function Hero() {
             <div className="relative">
               <div className="absolute inset-0 -m-8 rounded-full bg-[#E85D2F]/30 blur-3xl" />
               <img
-                src="/assets/product-tin.jpg"
+                src="/assets/product-main.jpg"
                 alt="WINSTEP unguento sportivo piedi - barattolo 50ml"
                 className="relative animate-float w-full max-w-sm rounded-3xl object-cover shadow-2xl"
               />
@@ -374,7 +374,7 @@ function Product() {
             <div className="relative">
               <div className="absolute -inset-4 rounded-full bg-[#E85D2F]/15 blur-3xl" />
               <img
-                src="/assets/product-tin.jpg"
+                src="/assets/product-main.jpg"
                 alt="WINSTEP unguento sportivo piedi 50ml"
                 className="relative mx-auto aspect-square w-full max-w-md rounded-3xl object-cover shadow-2xl"
               />
@@ -508,8 +508,8 @@ function Testimonial() {
             <div className="relative">
               <div className="absolute -inset-3 rounded-3xl bg-[#E85D2F]/15 blur-2xl" />
               <img
-                src="/assets/product-tin.jpg"
-                alt="Damiano Di Vozzo, triatleta e testimonial WINSTEP"
+                src="/assets/product-main.jpg"
+                alt="WINSTEP unguento sportivo - barattolo 50ml"
                 className="relative aspect-[3/4] w-full rounded-3xl object-cover shadow-xl"
               />
             </div>
