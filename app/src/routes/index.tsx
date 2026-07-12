@@ -435,7 +435,7 @@ function Product() {
               <motion.div style={{ y: imageY }} className="relative">
                 <div className="absolute inset-0 -m-12 rounded-full bg-[#E85D2F]/20 blur-[80px] animate-glow-pulse" />
                 <img
-                  src="/assets/product-glow.jpg"
+                  src="/assets/product-final.jpg"
                   alt="WINSTEP unguento sportivo - barattolo 50ml con illuminazione drammatica"
                   className="relative aspect-[3/4] w-full max-w-sm rounded-3xl object-cover shadow-2xl"
                 />
