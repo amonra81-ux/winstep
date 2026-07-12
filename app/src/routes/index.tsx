@@ -520,7 +520,7 @@ function Pricing() {
               <span className="h-px w-12 bg-[#E85D2F]" />
               <span className="text-mono-label text-[#E85D2F]">Offerte</span>
             </div>
-            <h2 className="text-display text-[clamp(1.75rem,4vw,4.5rem)] text-[#FAF7F2]">Scegli il tuo formato.</h2>
+            <h2 className="text-display text-[clamp(1.75rem,4vw,4.5rem)] text-[#FAF7F2]">Scegli come acquistare.</h2>
             <p className="mt-4 text-sm sm:text-lg text-[#FAF7F2]/50">Spedizione in tutta Italia. Pagamento sicuro con Stripe.</p>
           </div>
         </Reveal>
