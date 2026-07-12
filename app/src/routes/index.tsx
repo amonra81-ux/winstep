@@ -213,8 +213,8 @@ function Nav() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
         <a href="#" className="flex items-center gap-3">
-          <span className="text-display text-xl tracking-tight text-[#FAF7F2] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]">WIN</span>
-          <span className="text-display text-xl tracking-tight text-[#E85D2F] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]">STEP</span>
+          <span className="text-display text-xl tracking-normal text-[#FAF7F2] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]">WIN</span>
+          <span className="text-display text-xl tracking-normal text-[#E85D2F] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]">STEP</span>
         </a>
         <nav className="hidden items-center gap-10 md:flex">
           {["Il problema", "Prodotto", "Ingredienti", "Prezzi", "FAQ"].map((label, i) => {
