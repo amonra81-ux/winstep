@@ -264,7 +264,7 @@ function Problem() {
               <p className="text-headline text-[clamp(1.25rem,4vw,3rem)] text-[#FAF7F2]">
                 Dopo lo sforzo, i tuoi piedi sono <span className="text-[#E85D2F]">distrutti</span>.
               </p>
-              <p className="mt-2 text-sm sm:text-lg text-[#FAF7F2]/40">Nessuno ci aveva mai pensato.</p>
+              <p className="mt-2 text-sm sm:text-lg text-[#FAF7F2]/40">Nessuno propone niente di specifico per il recupero.</p>
             </div>
           </div>
         </Reveal>
