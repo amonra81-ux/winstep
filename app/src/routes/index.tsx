@@ -281,7 +281,7 @@ function Product() {
     { title: "Lenisce", desc: "Sollievo immediato alla pelle stressata dallo sforzo prolungato." },
     { title: "Ammorbidisce", desc: "Nutre la pelle secca e screpolata, dai talloni alla pianta." },
     { title: "Protegge", desc: "Crea una barriera naturale che protegge il piede prima dell'attività." },
-    { title: "Defaticante", desc: "Sensazione di sollievo post-workout, per un recupero migliore." },
+    { title: "Defatica", desc: "Sensazione di sollievo post-workout, per un recupero migliore." },
   ];
 
   const ref = useRef(null);
