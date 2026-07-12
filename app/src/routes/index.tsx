@@ -404,7 +404,7 @@ function Problem() {
               <p className="text-headline text-[clamp(1.5rem,4vw,3rem)] text-[#FAF7F2]">
                 Dopo lo sforzo, i tuoi piedi sono <span className="text-[#E85D2F]">distrutti</span>.
               </p>
-              <p className="mt-3 text-lg text-[#FAF7F2]/40">Nessuno gli aveva mai pensato.</p>
+              <p className="mt-3 text-lg text-[#FAF7F2]/40">Nessuno ci aveva mai pensato.</p>
             </div>
           </div>
         </Reveal>
