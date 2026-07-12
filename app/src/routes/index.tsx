@@ -360,9 +360,9 @@ function Problem() {
               <span className="text-mono-label text-[#E85D2F]">Il problema</span>
             </div>
             <h2 className="text-display text-[clamp(2.5rem,6vw,5rem)] text-[#FAF7F2]">
-              Tre mondi,
+              Tre discipline,
               <br />
-              <span className="text-[#FAF7F2]/20">un solo contatto.</span>
+              <span className="text-[#FAF7F2]/20">un solo prodotto.</span>
             </h2>
             <p className="mt-8 max-w-xl text-lg text-[#FAF7F2]/50">
               Chi fa endurance massacra i piedi in tre discipline diverse. Pelle secca, talloni spaccati, pianta indolenzita. E nessuno gli vende niente di specifico per il recupero.
