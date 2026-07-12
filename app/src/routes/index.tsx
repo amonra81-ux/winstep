@@ -362,7 +362,7 @@ function Problem() {
             <h2 className="text-display text-[clamp(2.5rem,6vw,5rem)] text-[#FAF7F2]">
               Tre discipline,
               <br />
-              <span className="text-[#FAF7F2]/20">un solo prodotto.</span>
+              <span className="text-[#FAF7F2]/20">un solo problema.</span>
             </h2>
             <p className="mt-8 max-w-xl text-lg text-[#FAF7F2]/50">
               Chi fa endurance massacra i piedi in tre discipline diverse. Pelle secca, talloni spaccati, pianta indolenzita. E nessuno gli vende niente di specifico per il recupero.
@@ -414,7 +414,7 @@ function Product() {
   const benefits = [
     { title: "Lenisce", desc: "Sollievo immediato alla pelle stressata dallo sforzo prolungato." },
     { title: "Ammorbidisce", desc: "Nutre la pelle secca e screpolata, dai talloni alla pianta." },
-    { title: "Protegge", desc: "Crea una barriera naturale che protegge il piede prima dell'attivita." },
+    { title: "Protegge", desc: "Crea una barriera naturale che protegge il piede prima dell'attività." },
     { title: "Defaticante", desc: "Sensazione di sollievo post-workout, per un recupero migliore." },
   ];
 
@@ -485,7 +485,7 @@ function Ingredients() {
   const ingredients = [
     { name: "Olio di semi di girasole", latin: "Helianthus annuus seed oil", desc: "Base idratante, ricco di vitamina E." },
     { name: "Olio d'oliva biologico", latin: "Olea europaea fruit oil *", desc: "Nutre e ammorbidisce con acidi grassi essenziali." },
-    { name: "Esteri di ricino idrogenato", latin: "Hydrogenated castor oil behenyl esters", desc: "Consistente naturale, dà corpo all'unguento." },
+    { name: "Esteri di ricino idrogenato", latin: "Hydrogenated castor oil behenyl esters", desc: "Consistenza naturale, dà corpo all'unguento." },
     { name: "Cera d'api", latin: "Cera alba", desc: "Barriera protettiva naturale che sigilla l'idratazione." },
     { name: "Olio di lavanda", latin: "Lavandula angustifolia oil", desc: "Lenisce la pelle con un profumo calmante." },
     { name: "Tocoferolo", latin: "Tocopheryl acetate", desc: "Vitamina E, antiossidante che protegge la pelle." },
@@ -564,7 +564,7 @@ function Ingredients() {
             <div className="rounded-2xl border border-[#E85D2F]/15 p-8">
               <h3 className="text-headline text-lg text-[#E85D2F]">Modo d'uso</h3>
               <p className="mt-4 text-sm leading-relaxed text-[#FAF7F2]/60">
-                Applicare una piccola quantita di unguento sui piedi puliti e asciutti. Massaggiare delicatamente fino a completo assorbimento, insistendo sulle zone piu secche o screpolate come talloni e pianta del piede.
+                Applicare una piccola quantità di unguento sui piedi puliti e asciutti. Massaggiare delicatamente fino a completo assorbimento, insistendo sulle zone più secche o screpolate come talloni e pianta del piede.
               </p>
             </div>
             <div className="rounded-2xl border border-[#FAF7F2]/8 p-8">
@@ -609,7 +609,7 @@ function Testimonial() {
               <div className="max-w-2xl">
                 <span className="text-mono-label text-[#E85D2F]">Testimonial</span>
                 <blockquote className="mt-6 text-display text-[clamp(1.8rem,4vw,3.5rem)] text-[#FAF7F2]">
-                  "Dopo ogni allenamento e ogni gara, i piedi sono la parte che soffre di piu. WINSTEP e il primo prodotto che mi fa dire: finalmente qualcuno ha pensato a noi."
+                  "Dopo ogni allenamento e ogni gara, i piedi sono la parte che soffre di più. WINSTEP è il primo prodotto che mi fa dire: finalmente qualcuno ha pensato a noi."
                 </blockquote>
                 <div className="mt-8 flex items-center gap-4">
                   <div className="h-px w-12 bg-[#E85D2F]" />
@@ -666,8 +666,8 @@ function Pricing() {
     {
       name: "Barattolo singolo",
       desc: "Prova WINSTEP a basso rischio",
-      price: "22",
-      unit: "euro",
+      price: "€22",
+      unit: "una volta",
       features: ["1 barattolo 50 ml", "Spedizione in 2-4 giorni", "PAO 6 mesi"],
       cta: "Acquista ora",
       link: STRIPE_LINKS.single,
@@ -676,9 +676,9 @@ function Pricing() {
     {
       name: "Kit 3 Discipline",
       desc: "Per chi allena duro",
-      price: "55",
-      unit: "invece di 66",
-      features: ["3 barattoli 50 ml", "Risparmi 11 euro", "Spedizione gratuita", "Ideale per la stagione"],
+      price: "€55",
+      unit: "invece di €66",
+      features: ["3 barattoli 50 ml", "Risparmi €11", "Spedizione gratuita", "Ideale per la stagione"],
       cta: "Prendi il kit",
       link: STRIPE_LINKS.kit,
       featured: true,
@@ -686,9 +686,9 @@ function Pricing() {
     {
       name: "Abbonamento",
       desc: "1 barattolo al mese",
-      price: "18",
+      price: "€18",
       unit: "/mese",
-      features: ["1 barattolo 50ml ogni mese", "Risparmi 4 euro al mese", "Annulla quando vuoi", "Spedizione gratuita"],
+      features: ["1 barattolo 50ml ogni mese", "Risparmi €4 al mese", "Annulla quando vuoi", "Spedizione gratuita"],
       cta: "Abbonati e risparmia",
       link: STRIPE_LINKS.subscription,
       featured: false,
@@ -725,7 +725,7 @@ function Pricing() {
               >
                 {plan.featured && (
                   <span className="absolute -top-3 left-8 rounded-full bg-[#E85D2F] px-4 py-1 text-mono-label text-[#0F0F0F]">
-                    Piu scelto
+                    Più scelto
                   </span>
                 )}
                 <h3 className={`text-headline text-xl ${plan.featured ? "text-[#E85D2F]" : "text-[#FAF7F2]"}`}>
@@ -776,16 +776,16 @@ function Pricing() {
 function FAQ() {
   const faqs = [
     {
-      q: "WINSTEP e un farmaco?",
-      a: "No, WINSTEP e un cosmetico regolare. Puo proteggere, ammorbidire, lenire e dare sollievo e sensazione di defaticamento. Non cura o guarisce patologie o dolori articolari: per quelli rivolgiti a un medico.",
+      q: "WINSTEP è un farmaco?",
+      a: "No, WINSTEP è un cosmetico regolare. Può proteggere, ammorbidire, lenire e dare sollievo e sensazione di defaticamento. Non cura o guarisce patologie o dolori articolari: per quelli rivolgiti a un medico.",
     },
     {
       q: "Posso usarlo se gareggio?",
-      a: "WINSTEP e un cosmetico a norma (conformita CPNP). La formula e naturale - olio d'oliva biologico, girasole, cera d'api, lavanda, vitamina E - e nessuno degli ingredienti e presente nelle liste WADA delle sostanze proibite.",
+      a: "WINSTEP è un cosmetico a norma (conformità CPNP). La formula è naturale - olio d'oliva biologico, girasole, cera d'api, lavanda, vitamina E - e nessuno degli ingredienti è presente nelle liste WADA delle sostanze proibite.",
     },
     {
       q: "Come si usa?",
-      a: "Applicare una piccola quantita di unguento sui piedi puliti e asciutti. Massaggiare delicatamente fino a completo assorbimento, insistendo sulle zone piu secche o screpolate come talloni e pianta del piede.",
+      a: "Applicare una piccola quantità di unguento sui piedi puliti e asciutti. Massaggiare delicatamente fino a completo assorbimento, insistendo sulle zone più secche o screpolate come talloni e pianta del piede.",
     },
     {
       q: "Quanto dura un barattolo?",
@@ -793,7 +793,7 @@ function FAQ() {
     },
     {
       q: "Posso annullare l'abbonamento?",
-      a: "Si, in qualsiasi momento. L'abbonamento mensile si gestisce tramite Stripe: niente vincoli, niente penali. Annulli quando vuoi dal link nelle email di conferma.",
+      a: "Sì, in qualsiasi momento. L'abbonamento mensile si gestisce tramite Stripe: niente vincoli, niente penali. Annulli quando vuoi dal link nelle email di conferma.",
     },
     {
       q: "Spedite all'estero?",
@@ -894,7 +894,7 @@ function Footer() {
             <span className="text-display text-lg text-[#E85D2F]">STEP</span>
           </div>
           <p className="text-center text-xs text-[#FAF7F2]/30">
-            WINSTEP e un cosmetico. Persona Responsabile: Licopharma Cosmetici, Sant'Agata di Puglia (FG).
+            WINSTEP è un cosmetico. Persona Responsabile: Licopharma Cosmetici, Sant'Agata di Puglia (FG).
             <br />
             Prodotto da Mariangela Silveri. Testimonial: Damiano Di Vozzo. 50 ml, PAO 6 mesi.
           </p>
