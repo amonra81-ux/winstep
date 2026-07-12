@@ -568,7 +568,7 @@ function Pricing() {
 function FAQ() {
   const faqs = [
     { q: "WINSTEP è un farmaco?", a: "No, WINSTEP è un cosmetico regolare. Può proteggere, ammorbidire, lenire e dare sollievo e sensazione di defaticamento. Non cura o guarisce patologie o dolori articolari: per quelli rivolgiti a un medico." },
-    { q: "Posso usarlo se gareggio?", a: "Sì. WINSTEP è un cosmetico a norma (conformità CPNP). La formula è naturale - olio d'oliva biologico, girasole, cera d'api, lavanda, vitamina E - e nessuno degli ingredienti è presente nelle liste WADA delle sostanze proibite." },
+    { q: "Posso usarlo se gareggio?", a: "Sì. WINSTEP è un cosmetico a norma (conformità CPNP). La formula è naturale e nessuno degli ingredienti è presente nelle liste WADA delle sostanze proibite." },
     { q: "Come si usa?", a: "Applicare una piccola quantità di unguento sui piedi puliti e asciutti. Massaggiare delicatamente fino a completo assorbimento, insistendo sulle zone più secche o screpolate come talloni e pianta del piede." },
     { q: "Quanto dura un barattolo?", a: "Il barattolo da 50 ml ha un PAO (Period After Opening) di 6 mesi. Con uso regolare post-allenamento, un barattolo dura circa 4-6 settimane." },
     { q: "Posso annullare l'abbonamento?", a: "Sì, in qualsiasi momento. L'abbonamento mensile si gestisce tramite Stripe: niente vincoli, niente penali. Annulli quando vuoi dal link nelle email di conferma." },
