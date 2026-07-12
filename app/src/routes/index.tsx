@@ -247,7 +247,7 @@ function Hero() {
   const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
   return (
-    <section ref={ref} className="relative flex min-h-[100svh] items-end overflow-hidden">
+    <section ref={ref} className="relative flex min-h-[100svh] items-center overflow-hidden">
       {/* Parallax background image */}
       <motion.div style={{ y: imageY, scale: imageScale }} className="absolute inset-0 z-0">
         <img
@@ -261,30 +261,30 @@ function Hero() {
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-[#0F0F0F]/80 via-[#0F0F0F]/20 to-[#0F0F0F]" />
 
       {/* Content — static, only entrance animation */}
-      <div className="relative z-20 w-full px-6 pb-16 pt-32">
+      <div className="relative z-20 w-full px-6 py-28 sm:py-24">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="mb-8 flex items-center gap-3"
+            className="mb-5 flex items-center gap-3"
           >
-            <span className="h-px w-12 bg-[#E85D2F]" />
+            <span className="h-px w-8 sm:w-12 bg-[#E85D2F]" />
             <span className="text-mono-label text-[#E85D2F]">Unguento sportivo · Post workout</span>
           </motion.div>
           <motion.h1
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, delay: 0.15 }}
-            className="text-display text-[clamp(3.5rem,13vw,10rem)] text-[#E85D2F] [text-shadow:0_4px_24px_rgba(0,0,0,0.5)]"
+            className="text-display text-[clamp(3rem,11vw,9rem)] leading-[0.85] text-[#E85D2F] [text-shadow:0_4px_24px_rgba(0,0,0,0.5)]"
           >
             WINSTEP
           </motion.h1>
           <motion.h2
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.9, delay: 0.35 }}
-            className="text-display text-[clamp(2rem,7vw,5.5rem)] text-[#FAF7F2] [text-shadow:0_4px_20px_rgba(0,0,0,0.5)]"
+            transition={{ duration: 0.9, delay: 0.3 }}
+            className="mt-2 text-display text-[clamp(1.5rem,6vw,5rem)] text-[#FAF7F2] [text-shadow:0_4px_20px_rgba(0,0,0,0.5)]"
           >
             Tre mondi.
             <br />
@@ -293,16 +293,16 @@ function Hero() {
           <motion.p
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.55 }}
-            className="mt-8 max-w-xl text-lg text-[#FAF7F2] [text-shadow:0_2px_12px_rgba(0,0,0,0.8)]"
+            transition={{ duration: 0.8, delay: 0.45 }}
+            className="mt-5 max-w-md text-base sm:text-lg text-[#FAF7F2] [text-shadow:0_2px_12px_rgba(0,0,0,0.8)]"
           >
             Potenza e vittoria in ogni gara. L'unguento sportivo per piedi dolenti che entra nella tua routine post-allenamento: lenisce, ammorbidisce, dà sollievo.
           </motion.p>
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="mt-10 flex flex-wrap items-center gap-5"
+            transition={{ duration: 0.8, delay: 0.55 }}
+            className="mt-7 flex flex-wrap items-center gap-4"
           >
             <MagneticButton href={STRIPE_LINKS.single} variant="primary">
               Acquista ora
