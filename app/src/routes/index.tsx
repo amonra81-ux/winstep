@@ -780,8 +780,8 @@ function FAQ() {
       a: "No, WINSTEP e un cosmetico regolare. Puo proteggere, ammorbidire, lenire e dare sollievo e sensazione di defaticamento. Non cura o guarisce patologie o dolori articolari: per quelli rivolgiti a un medico.",
     },
     {
-      q: "E vero che e certificato antidoping?",
-      a: "La formula e naturale e nessun ingrediente e in lista WADA. Usiamo il claim \"formula naturale, senza sostanze dopanti\". Non usiamo la parola \"certificato\" perche non abbiamo un certificato batch specifico. Se lo ottieni, lo mettiamo subito in prima pagina.",
+      q: "Posso usarlo se gareggio?",
+      a: "WINSTEP e un cosmetico a norma (conformita CPNP). La formula e naturale - olio d'oliva biologico, girasole, cera d'api, lavanda, vitamina E - e nessuno degli ingredienti e presente nelle liste WADA delle sostanze proibite.",
     },
     {
       q: "Come si usa?",
