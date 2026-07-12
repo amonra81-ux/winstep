@@ -231,7 +231,7 @@ function Problem() {
               <span className="text-mono-label text-[#E85D2F]">Il problema</span>
             </div>
             <h2 className="text-display text-[clamp(1.75rem,5vw,5rem)] text-[#FAF7F2]">
-              Tre discipline,
+              Tre mondi,
               <br />
               <span className="text-[#FAF7F2]/20">un solo problema.</span>
             </h2>
