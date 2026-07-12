@@ -517,7 +517,7 @@ function Pricing() {
               <span className="text-mono-label text-[#E85D2F]">Offerte</span>
             </div>
             <h2 className="text-display text-[clamp(1.75rem,4vw,4.5rem)] text-[#FAF7F2]">Scegli il tuo recupero.</h2>
-            <p className="mt-4 text-sm sm:text-lg text-[#FAF7F2]/50">Prezzi indicativi. Spedizione in tutta Italia. Pagamento sicuro con Stripe.</p>
+            <p className="mt-4 text-sm sm:text-lg text-[#FAF7F2]/50">Spedizione in tutta Italia. Pagamento sicuro con Stripe.</p>
           </div>
         </Reveal>
 
