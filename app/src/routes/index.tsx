@@ -245,7 +245,6 @@ function Hero() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
   const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
-  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
 
   return (
     <section ref={ref} className="relative flex min-h-[100svh] items-end overflow-hidden">
@@ -258,11 +257,11 @@ function Hero() {
         />
       </motion.div>
 
-      {/* Gradient overlay — dark top for nav, dark bottom for content */}
+      {/* Gradient overlay */}
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-[#0F0F0F]/80 via-[#0F0F0F]/20 to-[#0F0F0F]" />
 
-      {/* Content */}
-      <motion.div style={{ y: contentY }} className="relative z-20 w-full px-6 pb-16 pt-32">
+      {/* Content — static, only entrance animation */}
+      <div className="relative z-20 w-full px-6 pb-16 pt-32">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ y: 20, opacity: 0 }}
@@ -317,7 +316,7 @@ function Hero() {
             </a>
           </motion.div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
