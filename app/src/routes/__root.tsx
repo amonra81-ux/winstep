@@ -15,9 +15,9 @@ import appMetaJson from "../app-meta.json";
 
 declare const __HF_DESIGN_INSPECTOR__: boolean;
 
-const DEFAULT_TITLE = "WINSTEP — Unguento piedi per atleti di endurance";
+const DEFAULT_TITLE = "WINSTEP — Unguento sportivo per piedi dolenti";
 const DEFAULT_DESCRIPTION =
-  "Formula naturale, senza sostanze dopanti. Protegge e recupera i tuoi piedi dopo ogni allenamento.";
+  "Unguento sportivo naturale per il recupero dei piedi dopo l'allenamento. Potenza e vittoria in ogni gara.";
 
 type AppMeta = {
   og_title?: string | null;
@@ -25,33 +25,17 @@ type AppMeta = {
   og_image_url?: string | null;
   favicon_url?: string | null;
   og_video_url?: string | null;
+  marketplace_cover_url?: string | null;
 };
 
 const appMeta = appMetaJson as AppMeta;
 
-const APP_HOST_ZONES = ["higgsfield.app", "higgsfield-dev.app"];
-
-function toOwnAssetUrl(value: string | null | undefined): string | null {
-  if (!value) return null;
-  if (value.startsWith("/")) return value;
-  try {
-    const u = new URL(value);
-    const isAppHost = APP_HOST_ZONES.some(
-      (zone) => u.hostname === zone || u.hostname.endsWith(`.${zone}`),
-    );
-    if (isAppHost) return u.pathname + u.search;
-    return value;
-  } catch {
-    return value;
-  }
-}
-
 function buildHead(meta: AppMeta) {
   const title = meta.og_title ?? DEFAULT_TITLE;
   const description = meta.og_description ?? DEFAULT_DESCRIPTION;
-  const ogImage = toOwnAssetUrl(meta.og_image_url);
-  const favicon = toOwnAssetUrl(meta.favicon_url);
-  const ogVideo = toOwnAssetUrl(meta.og_video_url);
+  const ogImage = meta.og_image_url ?? null;
+  const favicon = meta.favicon_url ?? null;
+  const ogVideo = meta.og_video_url ?? null;
 
   return {
     meta: [
@@ -59,35 +43,20 @@ function buildHead(meta: AppMeta) {
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title },
       { name: "description", content: description },
-      { name: "author", content: "WINSTEP" },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: ogImage ? "summary_large_image" : "summary" },
-      { name: "twitter:site", content: "@winstep" },
       ...(ogImage
         ? [
             { property: "og:image", content: ogImage },
             { name: "twitter:image", content: ogImage },
           ]
         : []),
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: ogImage ? "summary_large_image" : "summary" },
       ...(ogVideo ? [{ property: "og:video", content: ogVideo }] : []),
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      {
-        rel: "preconnect",
-        href: "https://fonts.googleapis.com",
-      },
-      {
-        rel: "preconnect",
-        href: "https://fonts.gstatic.com",
-        crossOrigin: "anonymous" as const,
-      },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap",
-      },
       ...(favicon ? [{ rel: "icon", href: favicon }] : []),
     ],
   };
@@ -95,13 +64,14 @@ function buildHead(meta: AppMeta) {
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-[var(--color-ws-ivory)] px-4">
-      <div className="text-center">
-        <span className="ws-display text-6xl text-[var(--color-ws-teal)]">404</span>
-        <p className="mt-3 text-lg text-[var(--color-ws-muted)]">
-          Pagina non trovata.
-        </p>
-        <Link to="/" className="ws-btn-primary mt-6">
+    <div className="flex min-h-dvh items-center justify-center bg-[#FAF7F2] px-4">
+      <div className="max-w-md text-center">
+        <h1 className="text-4xl font-black uppercase tracking-tight text-[#1A1A1A]">404</h1>
+        <p className="mt-2 text-[#6B6B6B]">Pagina non trovata.</p>
+        <Link
+          to="/"
+          className="mt-6 inline-block rounded-full bg-[#E85D2F] px-6 py-3 font-bold uppercase tracking-wide text-white transition-transform hover:scale-105"
+        >
           Torna alla home
         </Link>
       </div>
@@ -117,25 +87,24 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   }, [error]);
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-[var(--color-ws-ivory)] px-4">
+    <div className="flex min-h-dvh items-center justify-center bg-[#FAF7F2] px-4">
       <div className="max-w-md text-center">
-        <h1 className="ws-display text-3xl text-[var(--color-ws-teal)]">
-          Qualcosa e andato storto
-        </h1>
-        <p className="mt-2 text-[var(--color-ws-muted)]">
-          Riprova ad aggiornare la pagina.
-        </p>
+        <h1 className="text-2xl font-bold text-[#1A1A1A]">Qualcosa e andato storto</h1>
+        <p className="mt-2 text-[#6B6B6B]">Riprova aggiornando la pagina.</p>
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="ws-btn-primary"
+            className="rounded-full bg-[#E85D2F] px-6 py-3 font-bold uppercase tracking-wide text-white"
           >
             Riprova
           </button>
-          <a href="/" className="ws-btn-outline">
+          <a
+            href="/"
+            className="rounded-full border-2 border-[#1A1A1A] px-6 py-3 font-bold uppercase tracking-wide text-[#1A1A1A]"
+          >
             Home
           </a>
         </div>
@@ -158,7 +127,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="bg-[#FAF7F2] text-[#1A1A1A] antialiased">
         {children}
         <Scripts />
       </body>

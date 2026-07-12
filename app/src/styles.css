@@ -1,161 +1,111 @@
-/* Cascade layer order: reset, theme, base, components, utilities */
 @layer reset, theme, base, components, utilities;
 
 @import "tailwindcss" source(none);
 @source "../src";
-@import "tw-animate-css";
 
-/* ===== WINSTEP Custom Theme ===== */
 @theme {
-  --color-ws-teal: #0A2E36;
-  --color-ws-teal-light: #144A52;
-  --color-ws-lime: #C8E84A;
-  --color-ws-lime-dark: #A8C830;
-  --color-ws-ivory: #F7F3EB;
-  --color-ws-sage: #4A6B5C;
-  --color-ws-charcoal: #1A1F1C;
-  --color-ws-muted: #5A6B5E;
-  --color-ws-border: #E2DDD0;
-
-  --font-display: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-
   --spacing: 0.25rem;
+
+  --color-ws-orange: #E85D2F;
+  --color-ws-orange-light: #FF7A4D;
+  --color-ws-orange-dark: #C44A20;
+  --color-ws-dark: #1A1A1A;
+  --color-ws-dark-2: #2D2D2D;
+  --color-ws-cream: #FAF7F2;
+  --color-ws-white: #FFFFFF;
+  --color-ws-text: #1A1A1A;
+  --color-ws-text-muted: #6B6B6B;
+  --color-ws-text-light: #FAF7F2;
+  --color-ws-pink: #F5C5C5;
+
+  --font-display: "Arial Narrow", "Helvetica Neue", system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  --radius: 0.625rem;
 }
 
 @layer base {
   html {
+    background-color: #FAF7F2;
+    color: #1A1A1A;
+    color-scheme: light;
     scroll-behavior: smooth;
-    background-color: var(--color-ws-ivory);
-    color: var(--color-ws-charcoal);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
     min-height: 100vh;
-    background-color: var(--color-ws-ivory);
-    color: var(--color-ws-charcoal);
+    background-color: #FAF7F2;
+    color: #1A1A1A;
     font-family: var(--font-body);
-    font-feature-settings: "ss01", "cv01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   ::selection {
-    background-color: var(--color-ws-lime);
-    color: var(--color-ws-teal);
+    background-color: #E85D2F;
+    color: #FFFFFF;
   }
 
-  /* Custom scrollbar */
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: var(--color-ws-ivory); }
-  ::-webkit-scrollbar-thumb { background: var(--color-ws-sage); border-radius: 4px; }
-}
-
-@layer components {
-  /* Display heading utility */
-  .ws-display {
-    font-family: var(--font-display);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.05;
+  ::-webkit-scrollbar {
+    width: 8px;
   }
 
-  .ws-eyebrow {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+  ::-webkit-scrollbar-track {
+    background: #FAF7F2;
   }
 
-  /* Primary CTA button */
-  .ws-btn-primary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.875rem 2rem;
-    background-color: var(--color-ws-lime);
-    color: var(--color-ws-teal);
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 0.875rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    border-radius: 9999px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 20px -4px rgba(200, 232, 74, 0.5);
-  }
-  .ws-btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px -4px rgba(200, 232, 74, 0.6);
-  }
-
-  /* Outline CTA button */
-  .ws-btn-outline {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.875rem 2rem;
-    background-color: transparent;
-    color: var(--color-ws-teal);
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.875rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    border-radius: 9999px;
-    border: 2px solid var(--color-ws-teal);
-    transition: background-color 0.2s ease, color 0.2s ease;
-  }
-  .ws-btn-outline:hover {
-    background-color: var(--color-ws-teal);
-    color: var(--color-ws-ivory);
-  }
-
-  /* Ghost CTA */
-  .ws-btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--color-ws-teal);
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.875rem;
-    letter-spacing: 0.03em;
-    transition: gap 0.2s ease;
-  }
-  .ws-btn-ghost:hover {
-    gap: 0.75rem;
-  }
-
-  /* Section container */
-  .ws-container {
-    max-width: 80rem;
-    margin-inline: auto;
-    padding-inline: 1.5rem;
-  }
-
-  /* Marquee animation */
-  @keyframes ws-marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-  .ws-marquee {
-    animation: ws-marquee 30s linear infinite;
+  ::-webkit-scrollbar-thumb {
+    background: #1A1A1A;
+    border-radius: 4px;
   }
 }
 
 @layer utilities {
-  .ws-text-balance {
-    text-wrap: balance;
+  .text-display {
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
   }
-  .ws-no-scrollbar::-webkit-scrollbar {
-    display: none;
+
+  .text-headline {
+    font-family: var(--font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
   }
-  .ws-no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-marquee {
+    animation: none;
+  }
+  .animate-float {
+    animation: none;
   }
 }

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINSTEP — Brochure</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #FAF7F2; color: #1A1A1A; }
+  .page { width: 210mm; min-height: 297mm; padding: 0; display: flex; flex-direction: column; }
+
+  /* === PANNELLO 1 — Front cover === */
+  .panel-cover {
+    background: #1A1A1A;
+    color: #FAF7F2;
+    padding: 35mm 20mm 20mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 297mm;
+    position: relative;
+    overflow: hidden;
+  }
+  .panel-cover::before {
+    content: '';
+    position: absolute;
+    left: 50%; top: 40%;
+    width: 400px; height: 400px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(232,93,47,0.2), transparent 70%);
+    border-radius: 50%;
+  }
+  .panel-cover .logo-row { display: flex; align-items: center; gap: 12px; position: relative; }
+  .panel-cover .logo-row img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+  .panel-cover .logo { font-size: 44px; font-weight: 900; text-transform: uppercase; letter-spacing: -2px; line-height: 1; }
+  .panel-cover .logo .accent { color: #E85D2F; }
+  .panel-cover .tagline { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: #E85D2F; margin-top: 8px; }
+  .panel-cover h1 { font-size: 34px; font-weight: 900; text-transform: uppercase; line-height: 1.1; letter-spacing: -1px; position: relative; }
+  .panel-cover .subtitle { font-size: 15px; color: #FAF7F2; opacity: 0.7; margin-top: 12px; line-height: 1.5; position: relative; }
+  .panel-cover .footer { font-size: 10px; color: #FAF7F2; opacity: 0.4; position: relative; }
+
+  /* === PANNELLO 2 — Back cover (QR + contatti) === */
+  .panel-back {
+    background: #FAF7F2;
+    padding: 30mm 20mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 297mm;
+  }
+  .panel-back h2 { font-size: 24px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; color: #1A1A1A; }
+  .panel-back p { font-size: 14px; color: #1A1A1A; opacity: 0.6; margin-bottom: 30px; max-width: 300px; line-height: 1.5; }
+  .qr-box { background: #FAF7F2; padding: 20px; border: 3px solid #E85D2F; border-radius: 16px; margin-bottom: 24px; }
+  .qr-box img { width: 180px; height: 180px; }
+  .scan-text { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #E85D2F; margin-bottom: 40px; }
+  .contact-info { font-size: 11px; color: #1A1A1A; opacity: 0.5; line-height: 1.8; }
+  .contact-info strong { color: #1A1A1A; opacity: 1; }
+
+  /* === PANNELLO 3 — Problema + Soluzione === */
+  .panel-content {
+    background: #FAF7F2;
+    padding: 22mm 16mm;
+    min-height: 297mm;
+  }
+  .panel-content .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: #E85D2F; }
+  .panel-content h2 { font-size: 26px; font-weight: 900; text-transform: uppercase; line-height: 1.1; margin-top: 8px; margin-bottom: 14px; color: #1A1A1A; }
+  .panel-content h2 .muted { color: #1A1A1A; opacity: 0.3; }
+  .panel-content p { font-size: 13px; line-height: 1.6; color: #1A1A1A; opacity: 0.7; margin-bottom: 12px; }
+
+  .worlds { display: flex; gap: 8px; margin: 16px 0; }
+  .world { flex: 1; background: white; border: 1px solid rgba(26,26,26,0.08); border-radius: 12px; padding: 12px; text-align: center; }
+  .world .icon { font-size: 24px; }
+  .world .name { font-size: 12px; font-weight: 900; text-transform: uppercase; margin-top: 4px; }
+  .world .desc { font-size: 9px; color: #1A1A1A; opacity: 0.5; margin-top: 2px; }
+
+  .benefits { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .benefit { background: #1A1A1A; color: #FAF7F2; padding: 12px; border-radius: 10px; }
+  .benefit h3 { font-size: 13px; font-weight: 900; text-transform: uppercase; color: #E85D2F; }
+  .benefit p { font-size: 10px; color: #FAF7F2; opacity: 0.6; margin-top: 4px; margin-bottom: 0; }
+
+  .ingredients-box { background: white; border: 2px solid #E85D2F; border-radius: 12px; padding: 14px; margin-top: 16px; }
+  .ingredients-box h3 { font-size: 12px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; color: #1A1A1A; }
+  .ingredients-list { display: flex; flex-wrap: wrap; gap: 5px; }
+  .ingredient-tag { background: #1A1A1A; color: #E85D2F; font-size: 9px; font-weight: 700; padding: 3px 9px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .uso-box { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+  .uso-card { border: 1px solid rgba(26,26,26,0.1); border-radius: 10px; padding: 10px; background: white; }
+  .uso-card h3 { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 4px; }
+  .uso-card.orange h3 { color: #E85D2F; }
+  .uso-card p { font-size: 9px; line-height: 1.4; margin: 0; }
+
+  .compliance { background: #1A1A1A; color: #FAF7F2; padding: 12px; border-radius: 10px; margin-top: 14px; font-size: 10px; line-height: 1.5; }
+  .compliance strong { color: #E85D2F; }
+
+  .price-box { display: flex; gap: 8px; margin-top: 14px; }
+  .price-card { flex: 1; border: 2px solid rgba(26,26,26,0.08); border-radius: 10px; padding: 10px; text-align: center; background: white; }
+  .price-card.featured { background: #1A1A1A; color: #FAF7F2; border-color: #E85D2F; }
+  .price-card .name { font-size: 10px; font-weight: 900; text-transform: uppercase; }
+  .price-card .price { font-size: 20px; font-weight: 900; margin: 3px 0; }
+  .price-card.featured .price { color: #E85D2F; }
+  .price-card .desc { font-size: 8px; opacity: 0.6; }
+
+  .testimonial { border-left: 4px solid #E85D2F; padding: 10px 14px; margin-top: 14px; }
+  .testimonial blockquote { font-size: 12px; font-weight: 600; line-height: 1.5; font-style: italic; color: #1A1A1A; }
+  .testimonial .author { font-size: 11px; font-weight: 700; margin-top: 6px; }
+  .testimonial .role { font-size: 10px; opacity: 0.5; }
+
+  /* Print layout */
+  @media print {
+    .brochure { display: flex; flex-direction: row; }
+    .panel { width: 33.33%; page-break-inside: avoid; }
+  }
+
+  .brochure { display: flex; flex-direction: column; }
+  .panel { width: 100%; }
+
+  @media (min-width: 800px) {
+    .brochure { flex-direction: row; }
+    .panel { width: 33.33%; }
+  }
+</style>
+</head>
+<body>
+<div class="brochure">
+
+  <!-- PANNELLO 1: Front cover -->
+  <div class="panel panel-cover">
+    <div style="position: relative;">
+      <div class="logo-row">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PGNpcmNsZSBjeD0iMjQiIGN5PSIyNCIgcj0iMjQiIGZpbGw9IiNFODVEMkYiLz48dGV4dCB4PSIyNCIgeT0iMzAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNiIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlc8L3RleHQ+PC9zdmc+" alt="WINSTEP logo" />
+        <div>
+          <div class="logo">WIN<span class="accent">STEP</span></div>
+          <div class="tagline">Unguento sportivo · Post workout</div>
+        </div>
+      </div>
+    </div>
+    <div style="position: relative;">
+      <h1>Tre mondi.<br>Un solo contatto.</h1>
+      <p class="subtitle">Potenza e vittoria in ogni gara. L'unguento naturale per il recupero dei piedi dopo lo sport. Formula senza sostanze dopanti.</p>
+    </div>
+    <div class="footer">
+      Prodotto da Mariangela Silveri<br>
+      Testimonial: Damiano Di Vozzo<br>
+      Persona Responsabile: Licopharma Cosmetici (FG)
+    </div>
+  </div>
+
+  <!-- PANNELLO 2: Contenuto -->
+  <div class="panel panel-content">
+    <span class="label">Il problema</span>
+    <h2>Tre mondi,<br><span class="muted">un solo contatto.</span></h2>
+    <p>Chi fa endurance massacra i piedi in tre discipline diverse. Pelle secca, talloni spaccati, pianta indolenzita.</p>
+
+    <div class="worlds">
+      <div class="world">
+        <div class="icon">🏊</div>
+        <div class="name">Nuoto</div>
+        <div class="desc">Spinta per ore</div>
+      </div>
+      <div class="world">
+        <div class="icon">🚴</div>
+        <div class="name">Bici</div>
+        <div class="desc">Talloni bloccati</div>
+      </div>
+      <div class="world">
+        <div class="icon">🏃</div>
+        <div class="name">Corsa</div>
+        <div class="desc">Impatto ripetuto</div>
+      </div>
+    </div>
+
+    <span class="label" style="margin-top: 12px; display: block;">La soluzione</span>
+    <h2 style="font-size: 20px;">Potenza e vittoria<br>in ogni gara.</h2>
+
+    <div class="benefits">
+      <div class="benefit">
+        <h3>Lenisce</h3>
+        <p>Sollievo immediato alla pelle stressata</p>
+      </div>
+      <div class="benefit">
+        <h3>Ammorbidisce</h3>
+        <p>Nutre pelle secca e screpolata</p>
+      </div>
+      <div class="benefit">
+        <h3>Protegge</h3>
+        <p>Barriera naturale prima dello sforzo</p>
+      </div>
+      <div class="benefit">
+        <h3>Defaticante</h3>
+        <p>Sensazione di recupero post-workout</p>
+      </div>
+    </div>
+
+    <div class="ingredients-box">
+      <h3>Formula naturale — 6 ingredienti</h3>
+      <div class="ingredients-list">
+        <span class="ingredient-tag">Olio di girasole</span>
+        <span class="ingredient-tag">Olio d'oliva bio</span>
+        <span class="ingredient-tag">Cera d'api</span>
+        <span class="ingredient-tag">Lavanda</span>
+        <span class="ingredient-tag">Vitamina E</span>
+        <span class="ingredient-tag">Canfora</span>
+      </div>
+    </div>
+
+    <div class="uso-box">
+      <div class="uso-card orange">
+        <h3>Modo d'uso</h3>
+        <p>Applicare sui piedi puliti e asciutti. Massaggiare fino ad assorbimento, insistendo su talloni e pianta.</p>
+      </div>
+      <div class="uso-card">
+        <h3>Avvertenze</h3>
+        <p>Solo uso esterno. Non su pelle lesa. Fuori portata bambini. 50 ml, PAO 6M.</p>
+      </div>
+    </div>
+
+    <div class="compliance">
+      <strong>Formula naturale, senza sostanze dopanti.</strong> Nessun ingrediente in lista WADA.<br>
+      Persona Responsabile: Licopharma Cosmetici, Sant'Agata di Puglia (FG).
+    </div>
+
+    <div class="price-box">
+      <div class="price-card">
+        <div class="name">Singolo</div>
+        <div class="price">€22</div>
+        <div class="desc">1 barattolo 50ml</div>
+      </div>
+      <div class="price-card featured">
+        <div class="name">Kit 3</div>
+        <div class="price">€55</div>
+        <div class="desc">3 barattoli · risparmi €11</div>
+      </div>
+      <div class="price-card">
+        <div class="name">Abbonamento</div>
+        <div class="price">€18</div>
+        <div class="desc">/mese · annulli quando vuoi</div>
+      </div>
+    </div>
+
+    <div class="testimonial">
+      <blockquote>"Finalmente qualcuno ha pensato a noi. Dopo ogni gara, i piedi sono la parte che soffre di piu."</blockquote>
+      <div class="author">Damiano Di Vozzo</div>
+      <div class="role">Triathlon Enthusiast &amp; Dad</div>
+    </div>
+  </div>
+
+  <!-- PANNELLO 3: Back cover con QR -->
+  <div class="panel panel-back">
+    <h2>Scansiona e acquista</h2>
+    <p>Porta il telefono sul QR code per visitare la pagina e ordinare WINSTEP direttamente online.</p>
+    <div class="qr-box">
+      <img src="winstep-qr.png" alt="QR code WINSTEP">
+    </div>
+    <div class="scan-text">winstep.higgsfield.app</div>
+    <div class="contact-info">
+      <strong>WINSTEP</strong> — Unguento sportivo piedi dolenti<br>
+      Prodotto da Mariangela Silveri<br>
+      Testimonial: Damiano Di Vozzo<br><br>
+      Pagamento sicuro con Stripe<br>
+      Spedizione in tutta Italia · Reso entro 14 giorni
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

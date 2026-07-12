@@ -1,225 +1,297 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, useScroll, useTransform } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useTransform, useInView, useMotionValue, useSpring } from "motion/react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  component: Landing,
 });
 
-/* ============================================================
-   WINSTEP — Landing page
-   Unguento piedi per atleti di endurance
-   ============================================================ */
-
-/* --- Stripe Payment Links ---
-   Sostituisci gli href qui sotto con i tuoi Stripe Payment Link reali.
-   Vedi la guida: Stripe > Prodotti > Crea Payment Link per ogni offerta.
-*/
+// === STRIPE PAYMENT LINKS ===
+// Sostituisci questi placeholder con i tuoi Stripe Payment Link reali.
 const STRIPE_LINKS = {
-  single: "#stripe-single",   // TODO: incolla il Payment Link per il tubo singolo
-  kit: "#stripe-kit",         // TODO: incolla il Payment Link per il kit 3 tubi
-  subscription: "#stripe-sub", // TODO: incolla il Payment Link per l'abbonamento
+  single: "#checkout-single",
+  kit: "#checkout-kit",
+  subscription: "#checkout-subscription",
 };
 
-function Index() {
+// ---------------------------------------------------------------------------
+// Reveal — entrance animation (transform-only, SSR-safe)
+// ---------------------------------------------------------------------------
+function Reveal({
+  children,
+  delay = 0,
+  y = 30,
+  className = "",
+}: {
+  children: ReactNode;
+  delay?: number;
+  y?: number;
+}) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
   return (
-    <div className="bg-[var(--color-ws-ivory)] text-[var(--color-ws-charcoal)]">
-      <Nav />
-      <Hero />
-      <Marquee />
-      <Problem />
-      <Product />
-      <Ingredients />
-      <HowToUse />
-      <Testimonial />
-      <Pricing />
-      <FAQ />
-      <FinalCTA />
-      <Footer />
-    </div>
+    <motion.div
+      ref={ref}
+      initial={{ y, opacity: 0 }}
+      animate={inView ? { y: 0, opacity: 1 } : {}}
+      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
   );
 }
 
-/* ============================== NAV ============================== */
+// ---------------------------------------------------------------------------
+// MagneticButton
+// ---------------------------------------------------------------------------
+function MagneticButton({
+  href,
+  children,
+  variant = "primary",
+  className = "",
+}: {
+  href: string;
+  children: ReactNode;
+  variant?: "primary" | "outline" | "dark";
+  className?: string;
+}) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, { stiffness: 300, damping: 20 });
+  const springY = useSpring(y, { stiffness: 300, damping: 20 });
+
+  function handleMove(e: React.MouseEvent) {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const mx = e.clientX - rect.left - rect.width / 2;
+    const my = e.clientY - rect.top - rect.height / 2;
+    x.set(mx * 0.25);
+    y.set(my * 0.25);
+  }
+
+  function handleLeave() {
+    x.set(0);
+    y.set(0);
+  }
+
+  const base =
+    "inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 font-bold uppercase tracking-wide text-sm transition-colors duration-200 will-change-transform";
+  const variants = {
+    primary: "bg-[#E85D2F] text-white hover:bg-[#FF7A4D]",
+    outline: "border-2 border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-[#FAF7F2]",
+    dark: "bg-[#1A1A1A] text-[#FAF7F2] hover:bg-[#2D2D2D]",
+  };
+
+  return (
+    <motion.a
+      ref={ref}
+      href={href}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      style={{ x: springX, y: springY }}
+      className={`${base} ${variants[variant]} ${className}`}
+    >
+      {children}
+    </motion.a>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Counter
+// ---------------------------------------------------------------------------
+function Counter({ to, suffix = "", duration = 1.5 }: { to: number; suffix?: string; duration?: number }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+  const [val, setVal] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    let start = 0;
+    const startTime = performance.now();
+    function tick(now: number) {
+      const elapsed = (now - startTime) / 1000;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      start = Math.round(to * eased);
+      setVal(start);
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }, [inView, to, duration]);
+
+  return (
+    <span ref={ref}>
+      {val}
+      {suffix}
+    </span>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Nav
+// ---------------------------------------------------------------------------
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    function onScroll() {
+      setScrolled(window.scrollY > 40);
+    }
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-[var(--color-ws-ivory)]/95 backdrop-blur-md shadow-sm"
-          : "bg-transparent"
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+        scrolled ? "bg-[#FAF7F2]/90 py-3 shadow-[0_1px_0_rgba(26,26,26,0.08)] backdrop-blur-md" : "py-5"
       }`}
     >
-      <div className="ws-container flex items-center justify-between py-4">
-        <a href="#top" className="flex items-center gap-2">
-          <Logo />
-          <span
-            className={`ws-display text-xl transition-colors ${
-              scrolled ? "text-[var(--color-ws-teal)]" : "text-[var(--color-ws-ivory)]"
-            }`}
-          >
-            WINSTEP
-          </span>
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6">
+        <a href="#" className="flex items-center gap-2">
+          <img src="/assets/product-logo.jpg" alt="WINSTEP" className="h-10 w-10 rounded-full object-cover" />
+          <span className="text-display text-xl text-[#E85D2F]">WINSTEP</span>
         </a>
-        <div className="hidden md:flex items-center gap-8">
-          {[
-            { href: "#problema", label: "Perché" },
-            { href: "#prodotto", label: "Prodotto" },
-            { href: "#ingredienti", label: "Ingredienti" },
-            { href: "#prezzi", label: "Prezzi" },
-            { href: "#faq", label: "FAQ" },
-          ].map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className={`text-sm font-medium transition-colors ${
-                scrolled
-                  ? "text-[var(--color-ws-muted)] hover:text-[var(--color-ws-teal)]"
-                  : "text-[var(--color-ws-ivory)]/80 hover:text-[var(--color-ws-ivory)]"
-              }`}
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
-        <a href={STRIPE_LINKS.single} className="ws-btn-primary text-xs">
+        <nav className="hidden items-center gap-8 md:flex">
+          <a href="#problema" className="text-sm font-semibold text-[#1A1A1A]/70 transition-colors hover:text-[#E85D2F]">
+            Il problema
+          </a>
+          <a href="#prodotto" className="text-sm font-semibold text-[#1A1A1A]/70 transition-colors hover:text-[#E85D2F]">
+            Prodotto
+          </a>
+          <a href="#ingredienti" className="text-sm font-semibold text-[#1A1A1A]/70 transition-colors hover:text-[#E85D2F]">
+            Ingredienti
+          </a>
+          <a href="#prezzi" className="text-sm font-semibold text-[#1A1A1A]/70 transition-colors hover:text-[#E85D2F]">
+            Prezzi
+          </a>
+          <a href="#faq" className="text-sm font-semibold text-[#1A1A1A]/70 transition-colors hover:text-[#E85D2F]">
+            FAQ
+          </a>
+        </nav>
+        <a
+          href={STRIPE_LINKS.single}
+          className="rounded-full bg-[#E85D2F] px-5 py-2 text-xs font-bold uppercase tracking-wide text-white transition-transform hover:scale-105"
+        >
           Acquista
         </a>
       </div>
-    </nav>
+    </header>
   );
 }
 
-function Logo() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-      <circle cx="14" cy="14" r="13" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M8 18 C8 14, 10 11, 14 11 C18 11, 20 14, 20 18"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <circle cx="14" cy="10" r="2.5" fill="currentColor" />
-    </svg>
-  );
-}
-
-/* ============================== HERO ============================== */
+// ---------------------------------------------------------------------------
+// Hero
+// ---------------------------------------------------------------------------
 function Hero() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "60%"]);
 
   return (
-    <section id="top" ref={ref} className="relative h-screen min-h-[700px] overflow-hidden">
-      {/* Background image with parallax */}
-      <motion.div style={{ y }} className="absolute inset-0 scale-110">
-        <img
-          src="/assets/hero.jpg"
-          alt="Atleta di endurance dopo una gara, piedi in recupero"
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-ws-teal)]/50 via-[var(--color-ws-teal)]/30 to-[var(--color-ws-teal)]/80" />
+    <section ref={ref} className="relative flex min-h-[100svh] items-center overflow-hidden bg-[#1A1A1A]">
+      {/* Background */}
+      <motion.div style={{ y: imageY, scale: imageScale }} className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1A1A1A] via-[#2D2D2D] to-[#1A1A1A]" />
+        <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#E85D2F]/20 blur-[100px]" />
       </motion.div>
 
       {/* Content */}
-      <motion.div
-        style={{ opacity }}
-        className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center"
-      >
-        <motion.span
-          initial={{ y: 20 }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="ws-eyebrow text-[var(--color-ws-lime)] mb-6"
-        >
-          Unguento piedi per atleti di endurance
-        </motion.span>
-        <motion.h1
-          initial={{ y: 30 }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-          className="ws-display text-[var(--color-ws-ivory)] text-5xl md:text-7xl lg:text-8xl max-w-4xl ws-text-balance"
-        >
-          Tre discipline.
-          <br />
-          <span className="text-[var(--color-ws-lime)]">Un solo</span> punto di contatto.
-        </motion.h1>
-        <motion.p
-          initial={{ y: 20 }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
-          className="mt-6 max-w-xl text-lg text-[var(--color-ws-ivory)]/80"
-        >
-          I tuoi piedi ti portano oltre il traguardo. WINSTEP li protegge e
-          li recupera. Formula naturale, senza sostanze dopanti.
-        </motion.p>
-        <motion.div
-          initial={{ y: 20 }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.7, delay: 0.5, ease: "easeOut" }}
-          className="mt-10 flex flex-col sm:flex-row items-center gap-4"
-        >
-          <a href={STRIPE_LINKS.single} className="ws-btn-primary">
-            Acquista ora — €22
-          </a>
-          <a href="#prodotto" className="ws-btn-ghost text-[var(--color-ws-ivory)]">
-            Scopri di più
-            <span aria-hidden>↓</span>
-          </a>
-        </motion.div>
-      </motion.div>
+      <motion.div style={{ y: contentY }} className="relative z-10 w-full px-6 pt-24">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2">
+          <div>
+            <motion.span
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              className="mb-4 inline-block rounded-full border border-[#E85D2F]/40 bg-[#E85D2F]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#E85D2F]"
+            >
+              Unguento sportivo · Post workout
+            </motion.span>
+            <motion.h1
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="text-display text-[clamp(2.5rem,7vw,5rem)] text-[#FAF7F2]"
+            >
+              Tre mondi.
+              <br />
+              <span className="text-[#E85D2F]">Un solo contatto.</span>
+            </motion.h1>
+            <motion.p
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="mt-6 max-w-md text-lg text-[#FAF7F2]/70"
+            >
+              Potenza e vittoria in ogni gara. L'unguento sportivo per piedi dolenti che entra nella tua routine post-allenamento: lenisce, ammorbidisce, dà sollievo.
+            </motion.p>
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.5 }}
+              className="mt-8 flex flex-wrap items-center gap-4"
+            >
+              <MagneticButton href={STRIPE_LINKS.single} variant="primary">
+                Acquista ora
+              </MagneticButton>
+              <a
+                href="#problema"
+                className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-[#FAF7F2]/70 transition-colors hover:text-[#E85D2F]"
+              >
+                Scopri di piu
+                <span aria-hidden>↓</span>
+              </a>
+            </motion.div>
+          </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
-        <div className="flex h-10 w-6 items-start justify-center rounded-full border-2 border-[var(--color-ws-ivory)]/40 p-1">
+          {/* Product visual */}
           <motion.div
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            className="h-2 w-1 rounded-full bg-[var(--color-ws-ivory)]/60"
-          />
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="flex justify-center"
+          >
+            <div className="relative">
+              <div className="absolute inset-0 -m-8 rounded-full bg-[#E85D2F]/30 blur-3xl" />
+              <img
+                src="/assets/product-tin.jpg"
+                alt="WINSTEP unguento sportivo piedi - barattolo 50ml"
+                className="relative animate-float w-full max-w-sm rounded-3xl object-cover shadow-2xl"
+              />
+            </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
 
-/* ============================== MARQUEE ============================== */
+// ---------------------------------------------------------------------------
+// Marquee strip
+// ---------------------------------------------------------------------------
 function Marquee() {
   const items = [
-    "NUOTO",
-    "BICI",
-    "CORSA",
-    "RECUPERO",
-    "FORMULA NATURALE",
-    "SENZA DOPING",
-    "50ML",
-    "PAO 6 MESI",
+    "Triathlon",
+    "Ironman",
+    "Endurance",
+    "Trail Running",
+    "Ciclismo",
+    "Nuoto",
+    "Post Workout",
+    "Naturale",
   ];
   return (
-    <div className="bg-[var(--color-ws-teal)] py-5 overflow-hidden">
-      <div className="ws-marquee flex whitespace-nowrap">
-        {[...items, ...items, ...items, ...items].map((item, i) => (
-          <span
-            key={i}
-            className="ws-display text-sm uppercase tracking-widest text-[var(--color-ws-lime)] mx-8"
-          >
+    <div className="overflow-hidden border-y border-[#1A1A1A]/10 bg-[#1A1A1A] py-4">
+      <div className="flex w-max animate-marquee gap-8">
+        {[...items, ...items, ...items].map((item, i) => (
+          <span key={i} className="flex items-center gap-8 text-sm font-bold uppercase tracking-widest text-[#E85D2F]">
             {item}
-            <span className="text-[var(--color-ws-ivory)]/30 ml-16">/</span>
+            <span className="text-[#E85D2F]/30">●</span>
           </span>
         ))}
       </div>
@@ -227,490 +299,438 @@ function Marquee() {
   );
 }
 
-/* ============================== PROBLEM ============================== */
+// ---------------------------------------------------------------------------
+// Problem section — "3 mondi, 1 contatto"
+// ---------------------------------------------------------------------------
 function Problem() {
-  const stats = [
-    { number: "3", label: "discipline, un solo punto\ndi contatto: i piedi" },
-    { number: "0", label: "creme specifiche per\nil recupero del piede" },
-    { number: "100%", label: "formula naturale,\nsenza sostanze dopanti" },
+  const worlds = [
+    { icon: "🏊", name: "Nuoto", desc: "Il piede spinge e flette contro l'acqua per ore" },
+    { icon: "🚴", name: "Bici", desc: "Pianta rigida e talloni bloccati nei pedali" },
+    { icon: "🏃", name: "Corsa", desc: "Impatto ripetuto, calli, attrito e vesciche" },
   ];
 
   return (
-    <section id="problema" className="py-24 md:py-32 bg-[var(--color-ws-ivory)]">
-      <div className="ws-container">
-        <div className="max-w-3xl">
-          <span className="ws-eyebrow text-[var(--color-ws-sage)]">Il problema</span>
-          <h2 className="ws-display mt-4 text-4xl md:text-5xl text-[var(--color-ws-teal)] ws-text-balance">
-            Il prezzo nascosto dell'endurance.
-          </h2>
-          <p className="mt-6 text-lg text-[var(--color-ws-muted)] leading-relaxed">
-            Il triatleta massacra i piedi piu di qualsiasi altro sportivo, e li
-            cura meno di qualsiasi altra parte del corpo. Dopo i lunghi restano
-            piedi doloranti, pelle secca e screpolata, talloni spaccati, pianta
-            indolenzita. Nessuno vende niente di specifico e naturale per il
-            recupero del piede: usano creme generiche o niente.
-          </p>
-        </div>
+    <section id="problema" className="bg-[#FAF7F2] py-24">
+      <div className="mx-auto max-w-6xl px-6">
+        <Reveal>
+          <div className="mx-auto mb-16 max-w-2xl text-center">
+            <span className="text-sm font-bold uppercase tracking-widest text-[#E85D2F]">
+              Il problema
+            </span>
+            <h2 className="mt-3 text-headline text-[clamp(2rem,4vw,3.5rem)] text-[#1A1A1A]">
+              Tre mondi, un solo punto di contatto.
+            </h2>
+            <p className="mt-4 text-lg text-[#1A1A1A]/60">
+              Chi fa endurance massacra i piedi in tre discipline diverse. Pelle secca, talloni spaccati, pianta indolenzita. E nessuno gli vende niente di specifico per il recupero.
+            </p>
+          </div>
+        </Reveal>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-          {stats.map((stat, i) => (
-            <motion.div
-              key={i}
-              initial={{ y: 40 }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.15, ease: "easeOut" }}
-              className="border-t-2 border-[var(--color-ws-teal)] pt-6"
-            >
-              <span className="ws-display text-5xl md:text-6xl text-[var(--color-ws-teal)]">
-                {stat.number}
-              </span>
-              <p className="mt-3 text-sm text-[var(--color-ws-muted)] whitespace-pre-line">
-                {stat.label}
-              </p>
-            </motion.div>
+        <div className="grid gap-6 md:grid-cols-3">
+          {worlds.map((w, i) => (
+            <Reveal key={w.name} delay={i * 0.12}>
+              <div className="group rounded-3xl border-2 border-[#1A1A1A]/8 bg-white p-8 transition-all hover:border-[#E85D2F] hover:shadow-lg">
+                <div className="mb-4 text-4xl">{w.icon}</div>
+                <h3 className="text-headline text-xl text-[#1A1A1A]">{w.name}</h3>
+                <p className="mt-2 text-sm text-[#1A1A1A]/60">{w.desc}</p>
+                <div className="mt-4 h-1 w-12 rounded-full bg-[#E85D2F] transition-all group-hover:w-full" />
+              </div>
+            </Reveal>
           ))}
         </div>
+
+        <Reveal delay={0.4}>
+          <div className="mt-10 rounded-3xl bg-[#1A1A1A] p-8 text-center">
+            <p className="text-headline text-[clamp(1.5rem,3vw,2.5rem)] text-[#FAF7F2]">
+              Dopo lo sforzo, i tuoi piedi sono{" "}
+              <span className="text-[#E85D2F]">distrutti</span>.
+              <br />
+              Nessuno gli aveva mai pensato.
+            </p>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
 }
 
-/* ============================== PRODUCT ============================== */
+// ---------------------------------------------------------------------------
+// Product section
+// ---------------------------------------------------------------------------
 function Product() {
   const benefits = [
-    {
-      icon: "🌿",
-      title: "Ammorbidisce e nutre",
-      text: "Azione emolliente su pelle secca e screpolata. Idrata in profondita i talloni e la pianta del piede.",
-    },
-    {
-      icon: "💆",
-      title: "Lenisce e dà sollievo",
-      text: "Sensazione di defaticamento dopo lo sforzo. Il piede stressato trova sollievo nella formula naturale.",
-    },
-    {
-      icon: "🛡️",
-      title: "Protegge la pelle",
-      text: "Applicato prima dell'allenamento, crea un film protettivo che riduce l'attrito e l'indurimento cutaneo.",
-    },
+    { title: "Lenisce", desc: "Sollievo immediato alla pelle stressata dallo sforzo prolungato." },
+    { title: "Ammorbidisce", desc: "Nutre la pelle secca e screpolata, dai talloni alla pianta." },
+    { title: "Protegge", desc: "Crea una barriera naturale che protegge il piede prima dell'attivita." },
+    { title: "Defaticante", desc: "Sensazione di sollievo post-workout, per un recupero migliore." },
   ];
 
   return (
-    <section id="prodotto" className="py-24 md:py-32 bg-[var(--color-ws-teal)] text-[var(--color-ws-ivory)]">
-      <div className="ws-container grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        {/* Product image */}
-        <div className="relative">
-          <div className="aspect-square overflow-hidden rounded-3xl">
-            <img
-              src="/assets/product.jpg"
-              alt="WINSTEP — tubo unguento 50ml"
-              className="h-full w-full object-cover"
-            />
-          </div>
-          <div className="absolute -bottom-4 -right-4 rounded-2xl bg-[var(--color-ws-lime)] px-6 py-4">
-            <span className="ws-display text-3xl text-[var(--color-ws-teal)]">50ml</span>
-            <p className="text-xs text-[var(--color-ws-teal)]/70 mt-1">Formato unico</p>
-          </div>
-        </div>
-
-        {/* Benefits */}
-        <div>
-          <span className="ws-eyebrow text-[var(--color-ws-lime)]">Il prodotto</span>
-          <h2 className="ws-display mt-4 text-4xl md:text-5xl ws-text-balance">
-            Pensato per chi
-            <br />
-            non si ferma mai.
-          </h2>
-          <p className="mt-6 text-[var(--color-ws-ivory)]/70 leading-relaxed">
-            WINSTEP e l'unguento che entra nella routine post-workout: si applica
-            a fine allenamento, ammorbisce e nutre, dà sollievo alla pelle
-            stressata. Non una crema qualsiasi — pensato per chi fa
-            nuoto-bici-corsa e sottopone i piedi a stress prolungato.
-          </p>
-
-          <div className="mt-10 space-y-6">
-            {benefits.map((b, i) => (
-              <div key={i} className="flex gap-4">
-                <span className="text-2xl shrink-0">{b.icon}</span>
-                <div>
-                  <h3 className="font-bold text-lg text-[var(--color-ws-ivory)]">
-                    {b.title}
-                  </h3>
-                  <p className="mt-1 text-sm text-[var(--color-ws-ivory)]/60">
-                    {b.text}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <a href={STRIPE_LINKS.single} className="ws-btn-primary mt-10">
-            Acquista ora — €22
-          </a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ============================== INGREDIENTS ============================== */
-function Ingredients() {
-  const ingredients = [
-    { name: "Olio d'oliva biologico", role: "Base emolliente, nutre in profondita" },
-    { name: "Olio di girasole", role: "Idratante, ricco di vitamina E" },
-    { name: "Cera d'api", role: "Film protettivo naturale" },
-    { name: "Lavanda", role: "Azione lenitiva e rinfrescante" },
-    { name: "Vitamina E", role: "Antiossidante, protegge la pelle" },
-    { name: "Canfora", role: "Sensazione di sollievo e defaticamento" },
-  ];
-
-  return (
-    <section id="ingredienti" className="py-24 md:py-32 bg-[var(--color-ws-ivory)]">
-      <div className="ws-container">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Image */}
-          <div className="order-2 lg:order-1">
-            <div className="aspect-[4/3] overflow-hidden rounded-3xl">
+    <section id="prodotto" className="bg-[#1A1A1A] py-24">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="grid items-center gap-12 md:grid-cols-2">
+          <Reveal>
+            <div className="relative">
+              <div className="absolute -inset-4 rounded-full bg-[#E85D2F]/15 blur-3xl" />
               <img
-                src="/assets/ingredients.jpg"
-                alt="Ingredienti naturali di WINSTEP"
-                className="h-full w-full object-cover"
+                src="/assets/product-tin.jpg"
+                alt="WINSTEP unguento sportivo piedi 50ml"
+                className="relative mx-auto aspect-square w-full max-w-md rounded-3xl object-cover shadow-2xl"
               />
             </div>
-          </div>
-
-          {/* Text */}
-          <div className="order-1 lg:order-2">
-            <span className="ws-eyebrow text-[var(--color-ws-sage)]">Ingredienti</span>
-            <h2 className="ws-display mt-4 text-4xl md:text-5xl text-[var(--color-ws-teal)] ws-text-balance">
-              Formula naturale.
+          </Reveal>
+          <Reveal delay={0.15}>
+            <span className="text-sm font-bold uppercase tracking-widest text-[#E85D2F]">
+              La soluzione
+            </span>
+            <h2 className="mt-3 text-headline text-[clamp(2rem,4vw,3.5rem)] text-[#FAF7F2]">
+              Potenza e vittoria
               <br />
-              Corta e leggibile.
+              in ogni gara.
             </h2>
-            <p className="mt-6 text-lg text-[var(--color-ws-muted)] leading-relaxed">
-              Sei ingredienti, nessun segreto. Nessun ingrediente in lista WADA.
-              Per un agonista che teme le positivita accidentali, "naturale e
-              pulito" e rassicurante.
+            <p className="mt-6 text-lg text-[#FAF7F2]/70">
+              Unguento sportivo per piedi dolenti. Si applica a fine allenamento, lavora sul recupero e sulla pelle. Pensato per chi sottopone i piedi a stress prolungato.
             </p>
-
-            <div className="mt-10 space-y-4">
-              {ingredients.map((ing, i) => (
-                <div
-                  key={i}
-                  className="flex items-start justify-between border-b border-[var(--color-ws-border)] pb-4"
-                >
-                  <div>
-                    <span className="font-bold text-[var(--color-ws-teal)]">
-                      {ing.name}
-                    </span>
-                    <p className="text-sm text-[var(--color-ws-muted)] mt-1">
-                      {ing.role}
-                    </p>
-                  </div>
-                  <span className="ws-eyebrow text-[var(--color-ws-sage)] mt-1">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+            <div className="mt-8 grid grid-cols-2 gap-4">
+              {benefits.map((b) => (
+                <div key={b.title} className="rounded-2xl border border-[#E85D2F]/20 bg-[#2D2D2D]/50 p-5">
+                  <h3 className="text-headline text-lg text-[#E85D2F]">{b.title}</h3>
+                  <p className="mt-2 text-sm text-[#FAF7F2]/60">{b.desc}</p>
                 </div>
               ))}
             </div>
-
-            <div className="mt-8 rounded-xl bg-[var(--color-ws-teal)]/5 border border-[var(--color-ws-teal)]/10 p-4">
-              <p className="text-sm text-[var(--color-ws-muted)]">
-                <strong className="text-[var(--color-ws-teal)]">
-                  Persona Responsabile:
-                </strong>{" "}
-                Licopharma Cosmetici (Sant'Agata di Puglia, FG).
-                Cosmetico regolarmente notificato. PAO 6 mesi. Solo uso esterno,
-                non applicare su pelle lesa.
-              </p>
+            <div className="mt-8">
+              <MagneticButton href={STRIPE_LINKS.single} variant="primary">
+                Prova WINSTEP
+              </MagneticButton>
             </div>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>
   );
 }
 
-/* ============================== HOW TO USE ============================== */
-function HowToUse() {
-  const steps = [
-    {
-      num: "01",
-      title: "Dopo l'allenamento",
-      text: "Lava e asciuga i piedi. Applica una noce di WINSTEP su talloni, pianta e dorso.",
-    },
-    {
-      num: "02",
-      title: "Massaggia",
-      text: "Massaggia con movimenti circolari fino a completo assorbimento. La formula penetra in profondita.",
-    },
-    {
-      num: "03",
-      title: "Recupera",
-      text: "Lascia agire. La sensazione di sollievo e defaticamento accompagna il tuo recupero post-workout.",
-    },
+// ---------------------------------------------------------------------------
+// Ingredients section — REAL ingredients from the label
+// ---------------------------------------------------------------------------
+function Ingredients() {
+  const ingredients = [
+    { name: "Olio di girasole", latin: "Helianthus annuus seed oil", desc: "Idrata e protegge, ricco di vitamina E." },
+    { name: "Olio d'oliva bio", latin: "Olea europaea fruit oil *", desc: "Nutre e ammorbidisce con acidi grassi essenziali." },
+    { name: "Cera d'api", latin: "Cera alba", desc: "Barriera protettiva naturale che sigilla l'idratazione." },
+    { name: "Olio di lavanda", latin: "Lavandula angustifolia oil", desc: "Lenisce la pelle con un profumo calmante." },
+    { name: "Vitamina E", latin: "Tocopheryl acetate", desc: "Antiossidante che protegge dallo stress ossidativo." },
+    { name: "Canfora", latin: "Camphor", desc: "Sollievo e sensazione di defaticamento." },
   ];
 
   return (
-    <section className="py-24 md:py-32 bg-[var(--color-ws-ivory)]">
-      <div className="ws-container">
-        <div className="text-center max-w-2xl mx-auto">
-          <span className="ws-eyebrow text-[var(--color-ws-sage)]">Come si usa</span>
-          <h2 className="ws-display mt-4 text-4xl md:text-5xl text-[var(--color-ws-teal)]">
-            Il rituale del recupero.
-          </h2>
-        </div>
+    <section id="ingredienti" className="bg-[#FAF7F2] py-24">
+      <div className="mx-auto max-w-6xl px-6">
+        <Reveal>
+          <div className="mx-auto mb-12 max-w-2xl text-center">
+            <span className="text-sm font-bold uppercase tracking-widest text-[#E85D2F]">
+              Formula naturale
+            </span>
+            <h2 className="mt-3 text-headline text-[clamp(2rem,4vw,3.5rem)] text-[#1A1A1A]">
+              Ingredienti veri.
+              <br />
+              <span className="text-[#1A1A1A]/30">Niente di superfluo.</span>
+            </h2>
+            <p className="mt-4 text-lg text-[#1A1A1A]/60">
+              Formula naturale, senza sostanze dopanti. Olio d'oliva biologico, cera d'api, lavanda e canfora. Nessun ingrediente in lista WADA.
+            </p>
+          </div>
+        </Reveal>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-          {steps.map((step, i) => (
-            <motion.div
-              key={i}
-              initial={{ y: 40 }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.15, ease: "easeOut" }}
-              className="rounded-2xl bg-white p-8 shadow-sm border border-[var(--color-ws-border)]"
-            >
-              <span className="ws-display text-5xl text-[var(--color-ws-lime-dark)]">
-                {step.num}
-              </span>
-              <h3 className="mt-4 font-bold text-xl text-[var(--color-ws-teal)]">
-                {step.title}
-              </h3>
-              <p className="mt-3 text-[var(--color-ws-muted)] leading-relaxed">
-                {step.text}
-              </p>
-            </motion.div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {ingredients.map((ing, i) => (
+            <Reveal key={ing.name} delay={i * 0.08}>
+              <div className="group rounded-2xl border border-[#1A1A1A]/8 bg-white p-6 transition-all hover:border-[#E85D2F] hover:shadow-lg">
+                <div className="flex items-start gap-3">
+                  <span className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-xs font-bold text-[#E85D2F]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <h3 className="text-headline text-base text-[#1A1A1A]">{ing.name}</h3>
+                    <p className="mt-0.5 text-xs italic text-[#1A1A1A]/40">{ing.latin}</p>
+                    <p className="mt-2 text-sm text-[#1A1A1A]/60">{ing.desc}</p>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
 
-/* ============================== TESTIMONIAL ============================== */
-function Testimonial() {
-  return (
-    <section className="py-24 md:py-32 bg-[var(--color-ws-teal)] text-[var(--color-ws-ivory)] relative overflow-hidden">
-      {/* Background lifestyle image */}
-      <div className="absolute inset-0 opacity-20">
-        <img
-          src="/assets/lifestyle.jpg"
-          alt=""
-          className="h-full w-full object-cover"
-        />
-      </div>
+        <Reveal delay={0.3}>
+          <div className="mt-8 flex flex-col items-start gap-4 rounded-2xl bg-[#1A1A1A] p-6 sm:flex-row sm:items-center">
+            <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#E85D2F] text-lg text-white">
+              ✓
+            </span>
+            <p className="text-sm text-[#FAF7F2]/80">
+              <strong className="font-bold text-[#E85D2F]">Formula naturale, senza sostanze dopanti.</strong> Olio d'oliva biologico. Persona Responsabile: Licopharma Cosmetici, Sant'Agata di Puglia (FG). Barattolo 50 ml in alluminio, PAO 6 mesi.
+            </p>
+          </div>
+        </Reveal>
 
-      <div className="ws-container relative z-10">
-        <div className="max-w-3xl mx-auto text-center">
-          <span className="ws-eyebrow text-[var(--color-ws-lime)]">
-            Testimonial
-          </span>
-          <blockquote className="ws-display mt-6 text-2xl md:text-4xl ws-text-balance leading-tight">
-            "Dopo un Ironman i piedi sono l'ultima cosa a cui pensi — finché non
-            non riesci piu a camminare. WINSTEP e il primo prodotto che ho
-            trovato pensato davvero per noi che facciamo endurance."
-          </blockquote>
-          <div className="mt-8 flex items-center justify-center gap-4">
-            <div className="h-14 w-14 rounded-full bg-[var(--color-ws-lime)]/20 flex items-center justify-center">
-              <span className="ws-display text-xl text-[var(--color-ws-lime)]">
-                DD
-              </span>
-            </div>
-            <div className="text-left">
-              <p className="font-bold text-[var(--color-ws-ivory)]">
-                Damiano Di Vozzo
+        {/* Uso e avvertenze */}
+        <Reveal delay={0.4}>
+          <div className="mt-6 grid gap-6 md:grid-cols-2">
+            <div className="rounded-2xl border-2 border-[#E85D2F]/20 bg-white p-6">
+              <h3 className="text-headline text-lg text-[#E85D2F]">Modo d'uso</h3>
+              <p className="mt-3 text-sm text-[#1A1A1A]/70 leading-relaxed">
+                Applicare una piccola quantita di unguento sui piedi puliti e asciutti. Massaggiare delicatamente fino a completo assorbimento, insistendo sulle zone piu secche o screpolate come talloni e pianta del piede.
               </p>
-              <p className="text-sm text-[var(--color-ws-ivory)]/60">
-                Triathlon Enthusiast & Dad
+            </div>
+            <div className="rounded-2xl border-2 border-[#1A1A1A]/10 bg-white p-6">
+              <h3 className="text-headline text-lg text-[#1A1A1A]">Avvertenze</h3>
+              <p className="mt-3 text-sm text-[#1A1A1A]/70 leading-relaxed">
+                Solo per uso esterno. Evitare il contatto con occhi e mucose. Non applicare su pelle lesa o irritata. Tenere fuori dalla portata dei bambini.
               </p>
             </div>
           </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Testimonial section
+// ---------------------------------------------------------------------------
+function Testimonial() {
+  return (
+    <section className="bg-[#2D2D2D] py-24">
+      <div className="mx-auto max-w-5xl px-6">
+        <div className="grid items-center gap-12 md:grid-cols-[1fr_2fr]">
+          <Reveal>
+            <div className="relative">
+              <div className="absolute -inset-3 rounded-3xl bg-[#E85D2F]/15 blur-2xl" />
+              <img
+                src="/assets/product-tin.jpg"
+                alt="Damiano Di Vozzo, triatleta e testimonial WINSTEP"
+                className="relative aspect-[3/4] w-full rounded-3xl object-cover shadow-xl"
+              />
+            </div>
+          </Reveal>
+          <Reveal delay={0.15}>
+            <div>
+              <span className="text-sm font-bold uppercase tracking-widest text-[#E85D2F]">
+                Testimonial
+              </span>
+              <blockquote className="mt-4 text-headline text-[clamp(1.5rem,3vw,2.5rem)] leading-tight text-[#FAF7F2]">
+                "Dopo ogni allenamento e ogni gara, i piedi sono la parte che soffre di piu. WINSTEP e il primo prodotto che mi fa dire: finalmente qualcuno ha pensato a noi."
+              </blockquote>
+              <div className="mt-6 flex items-center gap-4">
+                <div className="h-px w-12 bg-[#E85D2F]" />
+                <div>
+                  <p className="font-bold text-[#FAF7F2]">Damiano Di Vozzo</p>
+                  <p className="text-sm text-[#FAF7F2]/50">Triathlon Enthusiast &amp; Dad</p>
+                </div>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </div>
     </section>
   );
 }
 
-/* ============================== PRICING ============================== */
+// ---------------------------------------------------------------------------
+// Pricing section
+// ---------------------------------------------------------------------------
 function Pricing() {
   const plans = [
     {
-      name: "Tubo singolo",
+      name: "Barattolo singolo",
+      desc: "Prova WINSTEP a basso rischio",
       price: "€22",
-      desc: "Prova WINSTEP a basso rischio.",
-      features: [
-        "1 unguento 50ml",
-        "Spedizione standard",
-        "PAO 6 mesi",
-      ],
-      cta: "Acquista",
+      unit: "una volta",
+      features: ["1 barattolo 50 ml", "Spedizione in 2-4 giorni", "PAO 6 mesi"],
+      cta: "Acquista ora",
       link: STRIPE_LINKS.single,
-      highlight: false,
+      featured: false,
     },
     {
-      name: 'Kit "3 Discipline"',
+      name: "Kit 3 Discipline",
+      desc: "Per chi allena duro",
       price: "€55",
-      original: "€66",
-      desc: "Un tubo per ogni disciplina. Risparmi €11.",
-      features: [
-        "3 unguenti 50ml",
-        "Spedizione gratuita",
-        "Risparmio €11 vs singolo",
-        "Ideale per la stagione",
-      ],
-      cta: "Acquista il kit",
+      unit: "invece di €66",
+      features: ["3 barattoli 50 ml", "Risparmi €11", "Spedizione gratuita", "Ideale per la stagione"],
+      cta: "Prendi il kit",
       link: STRIPE_LINKS.kit,
-      highlight: true,
+      featured: true,
     },
     {
       name: "Abbonamento",
+      desc: "1 barattolo al mese, ricorrente",
       price: "€18",
-      period: "/mese",
-      desc: "Un tubo al mese, sempre a casa.",
-      features: [
-        "1 unguento 50ml/mese",
-        "Spedizione gratuita",
-        "Annulla quando vuoi",
-        "Risparmio €4/mese",
-      ],
-      cta: "Abbonati",
+      unit: "/mese",
+      features: ["1 barattolo 50ml ogni mese", "Risparmi €4 al mese", "Annulla quando vuoi", "Spedizione gratuita"],
+      cta: "Abbonati e risparmia",
       link: STRIPE_LINKS.subscription,
-      highlight: false,
+      featured: false,
     },
   ];
 
   return (
-    <section id="prezzi" className="py-24 md:py-32 bg-[var(--color-ws-ivory)]">
-      <div className="ws-container">
-        <div className="text-center max-w-2xl mx-auto">
-          <span className="ws-eyebrow text-[var(--color-ws-sage)]">Prezzi</span>
-          <h2 className="ws-display mt-4 text-4xl md:text-5xl text-[var(--color-ws-teal)]">
-            Scegli il tuo ritmo.
-          </h2>
-          <p className="mt-4 text-[var(--color-ws-muted)]">
-            Tutti i prezzi includono IVA. Pagamento sicuro tramite Stripe.
-          </p>
-        </div>
+    <section id="prezzi" className="bg-[#FAF7F2] py-24">
+      <div className="mx-auto max-w-6xl px-6">
+        <Reveal>
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <span className="text-sm font-bold uppercase tracking-widest text-[#E85D2F]">
+              Offerte
+            </span>
+            <h2 className="mt-3 text-headline text-[clamp(2rem,4vw,3.5rem)] text-[#1A1A1A]">
+              Scegli il tuo recupero
+            </h2>
+            <p className="mt-4 text-lg text-[#1A1A1A]/60">
+              Prezzi indicativi. Spedizione in tutta Italia. Pagamento sicuro con Stripe.
+            </p>
+          </div>
+        </Reveal>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid gap-6 md:grid-cols-3">
           {plans.map((plan, i) => (
-            <div
-              key={i}
-              className={`relative rounded-2xl p-8 border-2 transition-all ${
-                plan.highlight
-                  ? "border-[var(--color-ws-lime)] bg-white shadow-xl scale-105"
-                  : "border-[var(--color-ws-border)] bg-white hover:border-[var(--color-ws-sage)]"
-              }`}
-            >
-              {plan.highlight && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[var(--color-ws-lime)] px-4 py-1 text-xs font-bold text-[var(--color-ws-teal)] uppercase tracking-wide">
-                  Più scelto
-                </span>
-              )}
-              <h3 className="font-bold text-lg text-[var(--color-ws-teal)]">
-                {plan.name}
-              </h3>
-              <div className="mt-4 flex items-baseline gap-2">
-                <span className="ws-display text-4xl text-[var(--color-ws-teal)]">
-                  {plan.price}
-                </span>
-                {plan.period && (
-                  <span className="text-[var(--color-ws-muted)]">{plan.period}</span>
-                )}
-                {plan.original && (
-                  <span className="text-sm text-[var(--color-ws-muted)] line-through">
-                    {plan.original}
-                  </span>
-                )}
-              </div>
-              <p className="mt-3 text-sm text-[var(--color-ws-muted)]">
-                {plan.desc}
-              </p>
-              <ul className="mt-6 space-y-3">
-                {plan.features.map((f, j) => (
-                  <li key={j} className="flex items-start gap-2 text-sm">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 18 18"
-                      className="mt-0.5 shrink-0 text-[var(--color-ws-lime-dark)]"
-                      fill="none"
-                    >
-                      <path
-                        d="M3 9L7 13L15 5"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <span className="text-[var(--color-ws-charcoal)]">{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <a
-                href={plan.link}
-                className={`mt-8 block text-center ${
-                  plan.highlight ? "ws-btn-primary" : "ws-btn-outline"
+            <Reveal key={plan.name} delay={i * 0.12}>
+              <div
+                className={`relative flex h-full flex-col rounded-3xl border-2 p-7 transition-all ${
+                  plan.featured
+                    ? "border-[#E85D2F] bg-[#1A1A1A] shadow-xl"
+                    : "border-[#1A1A1A]/8 bg-white hover:border-[#1A1A1A]/20"
                 }`}
               >
-                {plan.cta}
-              </a>
-            </div>
+                {plan.featured && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#E85D2F] px-4 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                    Piu scelto
+                  </span>
+                )}
+                <h3 className={`text-headline text-xl ${plan.featured ? "text-[#E85D2F]" : "text-[#1A1A1A]"}`}>
+                  {plan.name}
+                </h3>
+                <p className={`mt-1 text-sm ${plan.featured ? "text-[#FAF7F2]/60" : "text-[#1A1A1A]/50"}`}>
+                  {plan.desc}
+                </p>
+                <div className="mt-5 flex items-baseline gap-1">
+                  <span className={`text-display text-4xl ${plan.featured ? "text-[#FAF7F2]" : "text-[#1A1A1A]"}`}>
+                    {plan.price}
+                  </span>
+                  <span className={`text-sm ${plan.featured ? "text-[#FAF7F2]/50" : "text-[#1A1A1A]/40"}`}>
+                    {plan.unit}
+                  </span>
+                </div>
+                <ul className="mt-6 flex-1 space-y-3">
+                  {plan.features.map((f) => (
+                    <li
+                      key={f}
+                      className={`flex items-center gap-2 text-sm ${
+                        plan.featured ? "text-[#FAF7F2]/80" : "text-[#1A1A1A]/70"
+                      }`}
+                    >
+                      <span className="text-[#E85D2F]">✓</span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-7">
+                  <a
+                    href={plan.link}
+                    className={`block rounded-full px-6 py-3.5 text-center text-sm font-bold uppercase tracking-wide transition-transform hover:scale-[1.02] ${
+                      plan.featured
+                        ? "bg-[#E85D2F] text-white"
+                        : "border-2 border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-[#FAF7F2]"
+                    }`}
+                  >
+                    {plan.cta}
+                  </a>
+                </div>
+              </div>
+            </Reveal>
           ))}
         </div>
 
-        <p className="mt-8 text-center text-sm text-[var(--color-ws-muted)]">
-          I prezzi sono indicativi. Spedizione in tutta Italia. Politica di
-          reso: 14 giorni.
+        <p className="mt-8 text-center text-xs text-[#1A1A1A]/40">
+          Tutti i prezzi includono IVA. Spedizione in tutta Italia. Reso entro 14 giorni.
         </p>
       </div>
     </section>
   );
 }
 
-/* ============================== FAQ ============================== */
+// ---------------------------------------------------------------------------
+// FAQ section
+// ---------------------------------------------------------------------------
 function FAQ() {
   const faqs = [
     {
-      q: "Cos'e WINSTEP?",
-      a: "WINSTEP e un unguento cosmetico per la cura dei piedi, pensato per atleti di endurance. Ammorbidisce, nutre e dà sollievo alla pelle stressata dopo l'allenamento.",
+      q: "WINSTEP e un farmaco?",
+      a: "No, WINSTEP e un cosmetico regolare. Puo proteggere, ammorbidire, lenire e dare sollievo e sensazione di defaticamento. Non cura o guarisce patologie o dolori articolari: per quelli rivolgiti a un medico.",
+    },
+    {
+      q: "E vero che e certificato antidoping?",
+      a: "La formula e naturale e nessun ingrediente e in lista WADA. Usiamo il claim \"formula naturale, senza sostanze dopanti\". Non usiamo la parola \"certificato\" perche non abbiamo un certificato batch specifico. Se lo ottieni, lo mettiamo subito in prima pagina.",
     },
     {
       q: "Come si usa?",
-      a: "Applica una noce di prodotto sui piedi puliti e asciutti, massaggia fino a completo assorbimento. Ideale dopo l'allenamento o prima di dormire.",
+      a: "Applicare una piccola quantita di unguento sui piedi puliti e asciutti. Massaggiare delicatamente fino a completo assorbimento, insistendo sulle zone piu secche o screpolate come talloni e pianta del piede.",
     },
     {
-      q: "E adatto a tutti gli sport?",
-      a: "WINSTEP e pensato per chi sottopone i piedi a stress prolungato: triathlon, corsa, ciclismo, nuoto, wakeboard. Funziona su qualsiasi piede che ha bisogno di recupero.",
+      q: "Quanto dura un barattolo?",
+      a: "Il barattolo da 50 ml ha un PAO (Period After Opening) di 6 mesi. Con uso regolare post-allenamento, un barattolo dura circa 4-6 settimane.",
     },
     {
-      q: "Contiene sostanze dopanti?",
-      a: "No. La formula e naturale: olio d'oliva bio, girasole, cera d'api, lavanda, vitamina E, canfora. Nessun ingrediente e in lista WADA. Non usiamo il termine 'certificato antidoping' perche non abbiamo un certificato batch specifico.",
+      q: "Posso annullare l'abbonamento?",
+      a: "Si, in qualsiasi momento. L'abbonamento mensile si gestisce tramite Stripe: niente vincoli, niente penali. Annulli quando vuoi dal link nelle email di conferma.",
     },
     {
-      q: "Quanto dura un tubo?",
-      a: "Il tubo da 50ml dura circa 1 mese con uso regolare (una applicazione al giorno). PAO 6 mesi dall'apertura.",
-    },
-    {
-      q: "Posso usarlo prima dell'allenamento?",
-      a: "Si. Applicato prima, crea un film protettivo che riduce l'attrito e l'indurimento cutaneo. Dopo, ammorbidisce e dà sollievo.",
+      q: "Spedite all'estero?",
+      a: "Attualmente spediamo in tutta Italia. Per spedizioni internazionali, scrivici e valuteremo caso per caso.",
     },
   ];
 
-  return (
-    <section id="faq" className="py-24 md:py-32 bg-[var(--color-ws-ivory)]">
-      <div className="ws-container max-w-3xl">
-        <div className="text-center">
-          <span className="ws-eyebrow text-[var(--color-ws-sage)]">FAQ</span>
-          <h2 className="ws-display mt-4 text-4xl md:text-5xl text-[var(--color-ws-teal)]">
-            Domande frequenti.
-          </h2>
-        </div>
+  const [open, setOpen] = useState<number | null>(0);
 
-        <div className="mt-12 space-y-4">
+  return (
+    <section id="faq" className="bg-[#FAF7F2] py-24">
+      <div className="mx-auto max-w-3xl px-6">
+        <Reveal>
+          <div className="mb-12 text-center">
+            <span className="text-sm font-bold uppercase tracking-widest text-[#E85D2F]">
+              FAQ
+            </span>
+            <h2 className="mt-3 text-headline text-[clamp(2rem,4vw,3.5rem)] text-[#1A1A1A]">
+              Domande frequenti
+            </h2>
+          </div>
+        </Reveal>
+
+        <div className="space-y-3">
           {faqs.map((faq, i) => (
-            <FAQItem key={i} {...faq} />
+            <Reveal key={i} delay={i * 0.05}>
+              <div className="overflow-hidden rounded-2xl border border-[#1A1A1A]/8 bg-white">
+                <button
+                  onClick={() => setOpen(open === i ? null : i)}
+                  className="flex w-full items-center justify-between gap-4 p-5 text-left"
+                >
+                  <span className="font-bold text-[#1A1A1A]">{faq.q}</span>
+                  <span
+                    className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-[#E85D2F] transition-transform duration-300 ${
+                      open === i ? "rotate-45" : ""
+                    }`}
+                  >
+                    +
+                  </span>
+                </button>
+                <div
+                  className="grid transition-all duration-300"
+                  style={{ gridTemplateRows: open === i ? "1fr" : "0fr" }}
+                >
+                  <div className="overflow-hidden">
+                    <p className="px-5 pb-5 text-[#1A1A1A]/70">{faq.a}</p>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -718,124 +738,85 @@ function FAQ() {
   );
 }
 
-function FAQItem({ q, a }: { q: string; a: string }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="rounded-xl border border-[var(--color-ws-border)] bg-white overflow-hidden">
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between px-6 py-4 text-left"
-      >
-        <span className="font-semibold text-[var(--color-ws-teal)]">{q}</span>
-        <span
-          className={`text-2xl text-[var(--color-ws-sage)] transition-transform duration-200 ${
-            open ? "rotate-45" : ""
-          }`}
-        >
-          +
-        </span>
-      </button>
-      {open && (
-        <div className="px-6 pb-4 text-[var(--color-ws-muted)] leading-relaxed">
-          {a}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ============================== FINAL CTA ============================== */
+// ---------------------------------------------------------------------------
+// Final CTA + Footer
+// ---------------------------------------------------------------------------
 function FinalCTA() {
   return (
-    <section className="py-24 md:py-32 bg-[var(--color-ws-teal)] text-[var(--color-ws-ivory)] relative overflow-hidden">
-      {/* Decorative lime accent */}
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[var(--color-ws-lime)]/10 to-transparent" />
-
-      <div className="ws-container relative z-10 text-center max-w-3xl mx-auto">
-        <h2 className="ws-display text-4xl md:text-6xl ws-text-balance">
-          I tuoi piedi ti portano
-          <br />
-          <span className="text-[var(--color-ws-lime)]">oltre il traguardo.</span>
-        </h2>
-        <p className="mt-6 text-lg text-[var(--color-ws-ivory)]/70">
-          Dagli il recupero che meritano. Formula naturale, senza sostanze
-          dopanti. Pensato per chi non si ferma mai.
-        </p>
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a href={STRIPE_LINKS.single} className="ws-btn-primary">
-            Acquista ora — €22
-          </a>
-          <a href={STRIPE_LINKS.kit} className="ws-btn-outline text-[var(--color-ws-ivory)] border-[var(--color-ws-ivory)]">
-            Scopri il kit — €55
-          </a>
-        </div>
+    <section className="relative overflow-hidden bg-[#1A1A1A] py-24">
+      <div className="absolute inset-0 z-0">
+        <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#E85D2F]/15 blur-3xl" />
+      </div>
+      <div className="relative z-10 mx-auto max-w-3xl px-6 text-center">
+        <Reveal>
+          <h2 className="text-display text-[clamp(2.5rem,6vw,4.5rem)] text-[#FAF7F2]">
+            I tuoi piedi
+            <br />
+            <span className="text-[#E85D2F]">se lo meritano.</span>
+          </h2>
+          <p className="mx-auto mt-6 max-w-xl text-lg text-[#FAF7F2]/70">
+            Inizia il tuo recupero oggi. Formula naturale, senza sostanze dopanti, pensata per chi spinge i piedi oltre il limite.
+          </p>
+          <div className="mt-10 flex flex-wrap justify-center gap-4">
+            <MagneticButton href={STRIPE_LINKS.single} variant="primary">
+              Acquista ora
+            </MagneticButton>
+            <a
+              href="#prezzi"
+              className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-[#FAF7F2] px-7 py-3.5 text-sm font-bold uppercase tracking-wide text-[#FAF7F2] transition-colors hover:bg-[#FAF7F2] hover:text-[#1A1A1A]"
+            >
+              Vedi offerte
+            </a>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
 }
 
-/* ============================== FOOTER ============================== */
 function Footer() {
   return (
-    <footer className="bg-[var(--color-ws-charcoal)] text-[var(--color-ws-ivory)]/70 py-16">
-      <div className="ws-container">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand */}
-          <div className="md:col-span-2">
-            <div className="flex items-center gap-2">
-              <span className="text-[var(--color-ws-lime)]">
-                <Logo />
-              </span>
-              <span className="ws-display text-xl text-[var(--color-ws-ivory)]">
-                WINSTEP
-              </span>
-            </div>
-            <p className="mt-4 text-sm max-w-sm">
-              Unguento piedi per atleti di endurance. Formula naturale, senza
-              sostanze dopanti. Un prodotto di Mariangela Silveri.
-            </p>
-            <p className="mt-4 text-xs text-[var(--color-ws-ivory)]/40">
-              Persona Responsabile: Licopharma Cosmetici — Sant'Agata di Puglia (FG).
-              Cosmetico regolarmente notificato.
-            </p>
+    <footer className="bg-[#1A1A1A] pb-12 pt-4">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="flex flex-col items-center justify-between gap-6 border-t border-[#FAF7F2]/10 pt-8 md:flex-row">
+          <div className="flex items-center gap-2">
+            <img src="/assets/product-logo.jpg" alt="WINSTEP" className="h-8 w-8 rounded-full object-cover" />
+            <span className="text-display text-xl text-[#FAF7F2]">WIN</span>
+            <span className="text-display text-xl text-[#E85D2F]">STEP</span>
           </div>
-
-          {/* Links */}
-          <div>
-            <h4 className="ws-eyebrow text-[var(--color-ws-lime)] mb-4">
-              Prodotto
-            </h4>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#prodotto" className="hover:text-[var(--color-ws-ivory)] transition-colors">Il prodotto</a></li>
-              <li><a href="#ingredienti" className="hover:text-[var(--color-ws-ivory)] transition-colors">Ingredienti</a></li>
-              <li><a href="#prezzi" className="hover:text-[var(--color-ws-ivory)] transition-colors">Prezzi</a></li>
-              <li><a href="#faq" className="hover:text-[var(--color-ws-ivory)] transition-colors">FAQ</a></li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="ws-eyebrow text-[var(--color-ws-lime)] mb-4">
-              Contatti
-            </h4>
-            <ul className="space-y-2 text-sm">
-              <li>Testimonial: Damiano Di Vozzo</li>
-              <li>Spedizioni in tutta Italia</li>
-              <li>Reso entro 14 giorni</li>
-              <li>Pagamento sicuro Stripe</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-12 pt-8 border-t border-[var(--color-ws-ivory)]/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-[var(--color-ws-ivory)]/40">
-            © {new Date().getFullYear()} WINSTEP. Tutti i diritti riservati.
+          <p className="text-center text-xs text-[#FAF7F2]/40">
+            WINSTEP e un cosmetico. Persona Responsabile: Licopharma Cosmetici, Sant'Agata di Puglia (FG).
+            <br />
+            Prodotto da Mariangela Silveri. Testimonial: Damiano Di Vozzo. 50 ml, PAO 6 mesi.
           </p>
-          <p className="text-xs text-[var(--color-ws-ivory)]/40">
-            Solo uso esterno. Non applicare su pelle lesa. PAO 6 mesi.
-          </p>
+          <div className="flex gap-4 text-xs text-[#FAF7F2]/40">
+            <a href="#" className="transition-colors hover:text-[#E85D2F]">Instagram</a>
+            <a href="#" className="transition-colors hover:text-[#E85D2F]">Contatti</a>
+            <a href="#" className="transition-colors hover:text-[#E85D2F]">Privacy</a>
+          </div>
         </div>
       </div>
     </footer>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Landing page
+// ---------------------------------------------------------------------------
+function Landing() {
+  return (
+    <div className="min-h-dvh bg-[#FAF7F2]">
+      <Nav />
+      <Hero />
+      <Marquee />
+      <Problem />
+      <Product />
+      <Ingredients />
+      <Testimonial />
+      <Pricing />
+      <FAQ />
+      <FinalCTA />
+      <Footer />
+    </div>
   );
 }
