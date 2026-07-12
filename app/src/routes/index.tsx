@@ -213,14 +213,14 @@ function Nav() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
         <a href="#" className="flex items-center gap-3">
-          <span className="text-display text-xl tracking-tight text-[#FAF7F2]">WIN</span>
-          <span className="text-display text-xl tracking-tight text-[#E85D2F]">STEP</span>
+          <span className="text-display text-xl tracking-tight text-[#FAF7F2] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]">WIN</span>
+          <span className="text-display text-xl tracking-tight text-[#E85D2F] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]">STEP</span>
         </a>
         <nav className="hidden items-center gap-10 md:flex">
           {["Il problema", "Prodotto", "Ingredienti", "Prezzi", "FAQ"].map((label, i) => {
             const href = `#${["problema", "prodotto", "ingredienti", "prezzi", "faq"][i]}`;
             return (
-              <a key={label} href={href} className="text-mono-label text-[#FAF7F2]/50 transition-colors hover:text-[#E85D2F]">
+              <a key={label} href={href} className="text-mono-label text-[#FAF7F2]/60 [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] transition-colors hover:text-[#E85D2F]">
                 {label}
               </a>
             );
@@ -260,10 +260,10 @@ function Hero() {
         />
       </motion.div>
 
-      {/* Gradient overlay */}
+      {/* Gradient overlay — dark top for nav, dark bottom for content */}
       <motion.div
         style={{ opacity: overlayOpacity }}
-        className="absolute inset-0 z-10 bg-gradient-to-t from-[#0F0F0F] via-[#0F0F0F]/30 to-[#0F0F0F]/50"
+        className="absolute inset-0 z-10 bg-gradient-to-b from-[#0F0F0F]/80 via-[#0F0F0F]/20 to-[#0F0F0F]"
       />
 
       {/* Content */}
@@ -282,7 +282,7 @@ function Hero() {
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, delay: 0.15 }}
-            className="text-display text-[clamp(3.5rem,13vw,10rem)] text-[#E85D2F]"
+            className="text-display text-[clamp(3.5rem,13vw,10rem)] text-[#E85D2F] [text-shadow:0_4px_24px_rgba(0,0,0,0.5)]"
           >
             WINSTEP
           </motion.h1>
@@ -290,7 +290,7 @@ function Hero() {
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.9, delay: 0.35 }}
-            className="text-display text-[clamp(2rem,7vw,5.5rem)] text-[#FAF7F2]"
+            className="text-display text-[clamp(2rem,7vw,5.5rem)] text-[#FAF7F2] [text-shadow:0_4px_20px_rgba(0,0,0,0.5)]"
           >
             Tre mondi.
             <br />
@@ -300,7 +300,7 @@ function Hero() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.55 }}
-            className="mt-8 max-w-xl text-lg text-[#FAF7F2]/60"
+            className="mt-8 max-w-xl text-lg text-[#FAF7F2]/80 [text-shadow:0_2px_8px_rgba(0,0,0,0.5)]"
           >
             Potenza e vittoria in ogni gara. L'unguento sportivo per piedi dolenti che entra nella tua routine post-allenamento: lenisce, ammorbidisce, dà sollievo.
           </motion.p>
