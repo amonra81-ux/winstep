@@ -483,12 +483,14 @@ function Product() {
 // ---------------------------------------------------------------------------
 function Ingredients() {
   const ingredients = [
-    { name: "Olio di girasole", latin: "Helianthus annuus", desc: "Idrata e protegge, ricco di vitamina E." },
-    { name: "Olio d'oliva bio", latin: "Olea europaea *", desc: "Nutre e ammorbidisce con acidi grassi essenziali." },
+    { name: "Olio di semi di girasole", latin: "Helianthus annuus seed oil", desc: "Base idratante, ricco di vitamina E." },
+    { name: "Olio d'oliva biologico", latin: "Olea europaea fruit oil *", desc: "Nutre e ammorbidisce con acidi grassi essenziali." },
+    { name: "Esteri di ricino idrogenato", latin: "Hydrogenated castor oil behenyl esters", desc: "Consistente naturale, dà corpo all'unguento." },
     { name: "Cera d'api", latin: "Cera alba", desc: "Barriera protettiva naturale che sigilla l'idratazione." },
-    { name: "Olio di lavanda", latin: "Lavandula angustifolia", desc: "Lenisce la pelle con un profumo calmante." },
-    { name: "Vitamina E", latin: "Tocopheryl acetate", desc: "Antiossidante che protegge dallo stress ossidativo." },
+    { name: "Olio di lavanda", latin: "Lavandula angustifolia oil", desc: "Lenisce la pelle con un profumo calmante." },
+    { name: "Tocoferolo", latin: "Tocopheryl acetate", desc: "Vitamina E, antiossidante che protegge la pelle." },
     { name: "Canfora", latin: "Camphor", desc: "Sollievo e sensazione di defaticamento." },
+    { name: "Componenti naturali", latin: "Linalool, Limonene, Pinene, Geraniol", desc: "Naturalmente presenti negli oli essenziali." },
   ];
 
   const ref = useRef(null);
