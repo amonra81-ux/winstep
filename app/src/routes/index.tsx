@@ -507,7 +507,7 @@ function Ingredients() {
               <span className="text-mono-label text-[#E85D2F]">Formula naturale</span>
             </div>
             <h2 className="text-display text-[clamp(2.5rem,5vw,4.5rem)] text-[#FAF7F2]">
-              Ingredienti veri.
+              Ingredienti naturali.
               <br />
               <span className="text-[#FAF7F2]/20">Niente di superfluo.</span>
             </h2>
