@@ -217,7 +217,7 @@ function Marquee() {
 function Problem() {
   const worlds = [
     { Icon: SwimIcon, name: "Nuoto", desc: "Il piede spinge e flette contro l'acqua per ore" },
-    { Icon: BikeIcon, name: "Bici", desc: "Pianta rigida e talloni bloccati nei pedali" },
+    { Icon: BikeIcon, name: "Bici", desc: "Pianta rigida e talloni bloccati sui pedali" },
     { Icon: RunIcon, name: "Corsa", desc: "Impatto ripetuto, calli, attrito e vesciche" },
   ];
 
