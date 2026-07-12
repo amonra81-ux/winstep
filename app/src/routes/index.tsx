@@ -243,11 +243,9 @@ function Nav() {
 function Hero() {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], [0.4, 0.9]);
-  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "80%"]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
 
   return (
     <section ref={ref} className="relative flex min-h-[100svh] items-end overflow-hidden">
@@ -261,13 +259,10 @@ function Hero() {
       </motion.div>
 
       {/* Gradient overlay — dark top for nav, dark bottom for content */}
-      <motion.div
-        style={{ opacity: overlayOpacity }}
-        className="absolute inset-0 z-10 bg-gradient-to-b from-[#0F0F0F]/80 via-[#0F0F0F]/20 to-[#0F0F0F]"
-      />
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-[#0F0F0F]/80 via-[#0F0F0F]/20 to-[#0F0F0F]" />
 
       {/* Content */}
-      <motion.div style={{ y: contentY, opacity: contentOpacity }} className="relative z-20 w-full px-6 pb-16 pt-32">
+      <motion.div style={{ y: contentY }} className="relative z-20 w-full px-6 pb-16 pt-32">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ y: 20, opacity: 0 }}
@@ -300,7 +295,7 @@ function Hero() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.55 }}
-            className="mt-8 max-w-xl text-lg text-[#FAF7F2]/80 [text-shadow:0_2px_8px_rgba(0,0,0,0.5)]"
+            className="mt-8 max-w-xl text-lg text-[#FAF7F2] [text-shadow:0_2px_12px_rgba(0,0,0,0.8)]"
           >
             Potenza e vittoria in ogni gara. L'unguento sportivo per piedi dolenti che entra nella tua routine post-allenamento: lenisce, ammorbidisce, dà sollievo.
           </motion.p>
@@ -443,7 +438,7 @@ function Product() {
                 <img
                   src="/assets/product-glow.jpg"
                   alt="WINSTEP unguento sportivo - barattolo 50ml con illuminazione drammatica"
-                  className="relative w-full rounded-3xl object-cover shadow-2xl"
+                  className="relative aspect-[3/4] w-full max-w-sm rounded-3xl object-cover shadow-2xl"
                 />
               </motion.div>
             </div>
