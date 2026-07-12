@@ -26,6 +26,7 @@ function Reveal({
   children: ReactNode;
   delay?: number;
   y?: number;
+  className?: string;
 }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
