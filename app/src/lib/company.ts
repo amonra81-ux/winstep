@@ -5,7 +5,7 @@ export const COMPANY = {
   address: "Via delle Calende 40F",
   city: "56025 Pontedera (PI)",
   country: "Italia",
-  email: "amon.ra81@gmail.com",
+  email: "winstep.official@gmail.com",
   // Persona Responsabile del cosmetico (ruolo regolatorio, distinto dal titolare).
   responsiblePerson: "Licopharma Cosmetici, Sant'Agata di Puglia (FG)",
   siteUrl: "https://winstep.higgsfield.app",
