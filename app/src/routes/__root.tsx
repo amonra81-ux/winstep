@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportHiggsfieldError } from "../lib/higgsfield-error-reporting";
 import appMetaJson from "../app-meta.json";
+import { CookieBanner } from "../components/cookie-banner";
 
 declare const __HF_DESIGN_INSPECTOR__: boolean;
 
@@ -158,6 +159,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      <CookieBanner />
     </QueryClientProvider>
   );
 }

@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion, useScroll, useTransform, useInView, useMotionValue, useSpring } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
+import { COMPANY } from "../lib/company";
+
 export const Route = createFileRoute("/")({
   component: Landing,
 });
@@ -408,7 +410,7 @@ function Ingredients() {
               <CheckIcon className="h-5 w-5 text-[#0F0F0F]" />
             </span>
             <p className="text-xs sm:text-sm text-[#FAF7F2]/70">
-              <strong className="font-bold text-[#E85D2F]">Formula naturale, senza sostanze dopanti.</strong> Olio d'oliva biologico. Persona Responsabile: Licopharma Cosmetici, Sant'Agata di Puglia (FG). Barattolo 50 ml in alluminio, PAO 6 mesi.
+              <strong className="font-bold text-[#E85D2F]">Formula naturale e anidra, senza sostanze dopanti.</strong> Olio d'oliva biologico. Persona Responsabile: Licopharma Cosmetici, Sant'Agata di Puglia (FG). Barattolo 50 ml in alluminio, PAO 6 mesi.
             </p>
           </div>
         </Reveal>
@@ -640,28 +642,159 @@ function FinalCTA() {
 }
 
 // ---------------------------------------------------------------------------
+// Newsletter — cattura contatti (nome + email) con consenso GDPR
+// ---------------------------------------------------------------------------
+function Newsletter() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (name.trim().length < 2) { setError("Inserisci il tuo nome."); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setError("Inserisci un'email valida."); return; }
+    if (!consent) { setError("Serve il consenso per ricevere le promozioni."); return; }
+
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name.trim(), email: email.trim(), consent: true }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean };
+      if (res.ok && data.ok) {
+        setStatus("ok");
+      } else {
+        setStatus("error");
+        setError("Qualcosa è andato storto. Riprova tra poco.");
+      }
+    } catch {
+      setStatus("error");
+      setError("Connessione non riuscita. Riprova tra poco.");
+    }
+  }
+
+  return (
+    <section id="contatti" className="relative overflow-hidden border-t border-[#FAF7F2]/5 bg-[#1A1A1A] py-16 sm:py-24">
+      <div className="relative mx-auto max-w-2xl px-4 sm:px-6">
+        <Reveal>
+          <div className="mb-4 flex items-center gap-3">
+            <span className="h-px w-12 bg-[#E85D2F]" />
+            <span className="text-mono-label text-[#E85D2F]">Resta aggiornato</span>
+          </div>
+          <h2 className="text-display text-[clamp(1.75rem,4vw,3.5rem)] text-[#FAF7F2]">
+            Sconti e novità,
+            <br />
+            <span className="text-[#FAF7F2]/30">prima di tutti.</span>
+          </h2>
+          <p className="mt-4 text-sm sm:text-base text-[#FAF7F2]/50">
+            Lascia nome ed email: ti avvisiamo su promozioni, sconti e nuovi prodotti WINSTEP. Niente spam, cancellazione in un click.
+          </p>
+        </Reveal>
+
+        {status === "ok" ? (
+          <Reveal className="mt-8">
+            <div className="flex items-start gap-4 rounded-2xl border border-[#E85D2F]/30 bg-[#0F0F0F] p-6">
+              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#E85D2F]">
+                <CheckIcon className="h-5 w-5 text-[#0F0F0F]" />
+              </span>
+              <div>
+                <p className="text-headline text-lg text-[#FAF7F2]">Iscrizione confermata.</p>
+                <p className="mt-1 text-sm text-[#FAF7F2]/50">Grazie! Riceverai le prossime promozioni WINSTEP via email.</p>
+              </div>
+            </div>
+          </Reveal>
+        ) : (
+          <Reveal className="mt-8">
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Il tuo nome"
+                  autoComplete="name"
+                  className="w-full rounded-xl border border-[#FAF7F2]/10 bg-[#0F0F0F] px-4 py-3.5 text-sm text-[#FAF7F2] placeholder:text-[#FAF7F2]/30 outline-none transition-colors focus:border-[#E85D2F]"
+                />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="La tua email"
+                  autoComplete="email"
+                  className="w-full rounded-xl border border-[#FAF7F2]/10 bg-[#0F0F0F] px-4 py-3.5 text-sm text-[#FAF7F2] placeholder:text-[#FAF7F2]/30 outline-none transition-colors focus:border-[#E85D2F]"
+                />
+              </div>
+
+              <label className="flex cursor-pointer items-start gap-3 text-xs text-[#FAF7F2]/50">
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 flex-shrink-0 accent-[#E85D2F]"
+                />
+                <span>
+                  Acconsento al trattamento dei miei dati per ricevere comunicazioni promozionali,
+                  come descritto nella{" "}
+                  <a href="/privacy" className="text-[#E85D2F] underline underline-offset-2 hover:text-[#FF7A4D]">
+                    Privacy Policy
+                  </a>
+                  . Posso revocare il consenso in qualsiasi momento.
+                </span>
+              </label>
+
+              {error ? <p className="text-xs text-[#FF7A4D]">{error}</p> : null}
+
+              <button
+                type="submit"
+                disabled={status === "sending"}
+                className="w-full rounded-full bg-[#E85D2F] px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-[#0F0F0F] transition-colors hover:bg-[#FF7A4D] disabled:opacity-60 sm:w-auto"
+              >
+                {status === "sending" ? "Invio…" : "Iscrivimi"}
+              </button>
+            </form>
+          </Reveal>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Footer — compact
 // ---------------------------------------------------------------------------
 function Footer() {
   return (
-    <footer className="border-t border-[#FAF7F2]/5 bg-[#0F0F0F] py-8 sm:py-12">
+    <footer className="border-t border-[#FAF7F2]/5 bg-[#0F0F0F] py-10 sm:py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
+        <div className="flex flex-col items-center justify-between gap-6 md:flex-row md:items-start">
           <div className="flex items-center">
             <span className="text-display text-base sm:text-lg text-[#FAF7F2]">WIN</span>
             <span className="text-display text-base sm:text-lg text-[#E85D2F]">STEP</span>
           </div>
-          <p className="text-center text-xs text-[#FAF7F2]/30">
-            WINSTEP è un cosmetico. Persona Responsabile: Licopharma Cosmetici, Sant'Agata di Puglia (FG).
+          <p className="max-w-md text-center text-xs leading-relaxed text-[#FAF7F2]/30 md:text-left">
+            {COMPANY.name} — P.IVA {COMPANY.vat}
             <br />
-            Prodotto da Mariangela Silveri. Testimonial: Damiano Di Vozzo. 50 ml, PAO 6 mesi.
+            {COMPANY.address}, {COMPANY.city}, {COMPANY.country}
+            <br />
+            <span className="mt-2 inline-block">
+              WINSTEP è un cosmetico. Formula anidra. Persona Responsabile: {COMPANY.responsiblePerson}. Barattolo 50 ml, PAO 6 mesi.
+            </span>
           </p>
-          <div className="flex gap-4 sm:gap-6 text-mono-label text-[#FAF7F2]/30">
-            <a href="#" className="transition-colors hover:text-[#E85D2F]">Instagram</a>
-            <a href="#" className="transition-colors hover:text-[#E85D2F]">Contatti</a>
-            <a href="#" className="transition-colors hover:text-[#E85D2F]">Privacy</a>
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-mono-label text-[#FAF7F2]/30">
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#E85D2F]">Instagram</a>
+            <a href="#contatti" className="transition-colors hover:text-[#E85D2F]">Contatti</a>
+            <a href="/privacy" className="transition-colors hover:text-[#E85D2F]">Privacy</a>
+            <a href="/cookie" className="transition-colors hover:text-[#E85D2F]">Cookie</a>
           </div>
         </div>
+        <p className="mt-8 text-center text-[10px] text-[#FAF7F2]/20 md:text-left">
+          © {COMPANY.name} · Testimonial: Damiano Di Vozzo · Tutti i diritti riservati.
+        </p>
       </div>
     </footer>
   );
@@ -684,6 +817,7 @@ function Landing() {
       <Pricing />
       <FAQ />
       <FinalCTA />
+      <Newsletter />
       <Footer />
     </div>
   );
